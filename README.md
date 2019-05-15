@@ -18,18 +18,22 @@ This game is inspired by the classic arcade game [Super Puzzle Fighter II Turbo]
 - Players can choose their character that determines their attack gem pattern.
 
 ## MVP Features
-- [ ] Basic visuals and an interactive interface.
+- [ ] Basic visuals and an interactive interface
+- [ ] Basic game mechanics (gems randomly generate, attack gems are sent when gems are cleared, counter gem, etc.)
 - [ ] Users can move gem pairs
+- [ ] Users can choose their charcter that determines their attack pattern
 - [ ] Game ends when a player blocks their drop alley
-- [ ] 
 
 ## Architecture and Technologies
 - Vanilla JavaScript for game logic.
 - HTML5 Canvas for rendering.
 - Howler.js (or HTML audio player) for game background music.
 - Webpack to bundle various scripts into a single source.
-    ...
+
 ## Implementation Timeline
-    * Most important category
-    * Daily breakdown
-    * Aim to be done by Friday
+### Wednesday
+### Thursday
+### Friday
+### Saturday
+### Sunday
+### Monday
