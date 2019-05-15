@@ -1,4 +1,4 @@
-#Gem Battle
+# Gem Battle
 
 ## Background and Overview
 Gem Battle is a two-player game in which players battle each other with the goal of overpowering their opponent. 
