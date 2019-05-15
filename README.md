@@ -32,8 +32,20 @@ This game is inspired by the classic arcade game [Super Puzzle Fighter II Turbo]
 
 ## Implementation Timeline
 ### Wednesday
+- [ ] Research and create proposal
+- [ ] Create project skeleton
+- [ ] Research canvas and javascript 
 ### Thursday
+- [ ] Wireframe game page with playing field
+- [ ] Complete game page
+- [ ] Start coding game logic
 ### Friday
+- [ ] Continue coding game logic
+- [ ] Start creating game play visuals
 ### Saturday
+- [ ] Finish coding game logic
+- [ ] Finish visuals
 ### Sunday
-### Monday
+- [ ] Finish styling
+- [ ] Finish MVPs
+- [ ] Fix bugs
