@@ -86,6 +86,17 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/game.js":
+/*!*********************!*\
+  !*** ./src/game.js ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const Gems = __webpack_require__(/*! ./gems */ \"./src/gems.js\")\n\nclass Game {\n  constructor(ctx) {\n    this.ctx = ctx;\n  }\n\n  randomGemColors() {\n    const colors = [\"#ff0000\", \"#0000ff\", \"#08d123\", \"#fce305\"];\n    return [colors[Math.floor(Math.random() * 4)], colors[Math.floor(Math.random() * 4)]];\n  }\n\n  gameStart() {\n    const gem = new Gems({ pos: { x: 150, y: 0 }, colors: this.randomGemColors() });\n    gem.render(this.ctx);\n  }\n\n\n\n \n}\n\nmodule.exports = Game;\n\n//# sourceURL=webpack:///./src/game.js?");
+
+/***/ }),
+
 /***/ "./src/gems.js":
 /*!*********************!*\
   !*** ./src/gems.js ***!
@@ -93,7 +104,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("class Gems {\n  constructor() {\n    this.pos = { x: 150, y: 0 },\n    this.size = { width: 50, height: 50 }\n    this.color = [\"#ff0000\", \"#0000ff\", \"#00ff00\", \"#ffff00\"]\n  }\n\n  render(ctx) {\n    ctx.fillStyle = this.color[Math.floor(Math.random() * this.color.length)];\n    ctx.fillRect(\n      this.pos.x,\n      this.pos.y,\n      this.size.width,\n      this.size.height)\n    ctx.fillStyle = this.color[Math.floor(Math.random() * this.color.length)];\n    ctx.fillRect(\n      this.pos.x,\n      this.pos.y + 50,\n      this.size.width,\n      this.size.height\n    );\n  }\n}\n\nmodule.exports = Gems;\n\n//# sourceURL=webpack:///./src/gems.js?");
+eval("class Gems {\n  constructor({ pos, colors }) {\n    this.pos = pos,\n    this.size = { width: 50, height: 50 }\n    this.colors = colors;\n    // this.drop = this.drop.bind(this);\n    // this.render = this.render.bind(this);\n  }\n\n  render(ctx) {\n    ctx.fillStyle = this.colors[0];\n    ctx.fillRect(\n      this.pos.x,\n      this.pos.y,\n      this.size.width,\n      this.size.height\n      );\n    ctx.fillStyle = this.colors[1];\n    ctx.fillRect(\n      this.pos.x,\n      this.pos.y + 50,\n      this.size.width,\n      this.size.height\n      );\n  }\n\n  // drop(ctx) {\n  //   requestAnimationFrame(this.drop(ctx));\n  //   ctx.clearRect(0,0, 300, 650);\n  //   this.pos = { x: this.pos.x, y: this.pos.y + 1 };\n  //   this.render(ctx);\n  // }\n\n}\n\nmodule.exports = Gems;\n\n//# sourceURL=webpack:///./src/gems.js?");
 
 /***/ }),
 
@@ -104,7 +115,7 @@ eval("class Gems {\n  constructor() {\n    this.pos = { x: 150, y: 0 },\n    thi
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const Gems = __webpack_require__(/*! ./gems */ \"./src/gems.js\")\n\n\ndocument.addEventListener('DOMContentLoaded', () => {\n  const canvasPF1 = document.getElementById(\"play-field-1\");\n  const ctxPF1 = canvasPF1.getContext('2d');\n\n  canvasPF1.width = 300;\n  canvasPF1.height = 650;\n  const gem = new Gems()\n  gem.render(ctxPF1);\n})\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("const Game = __webpack_require__(/*! ./game */ \"./src/game.js\")\n\n\ndocument.addEventListener('DOMContentLoaded', () => {\n  const canvasPF1 = document.getElementById(\"play-field-1\");\n  canvasPF1.width = 300;\n  canvasPF1.height = 650;\n  const ctxPF1 = canvasPF1.getContext('2d');\n  const game = new Game(ctxPF1);\n\n  game.gameStart();\n});\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ })
 
