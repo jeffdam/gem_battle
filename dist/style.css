@@ -1,0 +1,15 @@
+canvas {
+  background:white;
+  width: 300px;
+  height: 650px;
+  border: 1px solid black;
+  margin: auto;
+}
+
+.play-fields {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100%;
+}
+
