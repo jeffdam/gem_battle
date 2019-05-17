@@ -29,7 +29,7 @@ class Gems {
     this.render(ctx);
   }
 
-  moveHorizontal(direction) {
+  moveHorizontal(direction, adjColHeight) {
     if (direction === "left" && this.posX > 0) {
       this.posX -= 50;
       this.col -= 1;
