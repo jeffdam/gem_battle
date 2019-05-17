@@ -30,10 +30,10 @@ class Gems {
   }
 
   moveHorizontal(direction, adjColHeight) {
-    if (direction === "left" && this.posX > 0) {
+    if (direction === "left" && this.posX > 0 && this.posY < adjColHeight) {
       this.posX -= 50;
       this.col -= 1;
-    } else if (direction === "right" && this.posX < 250) {
+    } else if (direction === "right" && this.posX < 250 && this.posY < adjColHeight) {
       this.posX += 50;
       this.col += 1;
     }

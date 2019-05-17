@@ -85,13 +85,13 @@ class Game {
         case "Left": // IE/Edge specific value
         case "ArrowLeft":
         // const gemPrimAdjColHeight = 
-        this.gemPrimary.moveHorizontal('left');
-        this.gemSecondary.moveHorizontal('left');
+        this.gemPrimary.moveHorizontal('left', this.colHeight("sec", `col${this.gemSecondary.col-1}`));
+        this.gemSecondary.moveHorizontal('left', this.colHeight("sec", `col${this.gemSecondary.col-1}`));
         break;
         case "Right": // IE/Edge specific value
         case "ArrowRight":
-        this.gemPrimary.moveHorizontal('right');
-        this.gemSecondary.moveHorizontal('right');
+        this.gemPrimary.moveHorizontal('right', this.colHeight("sec", `col${this.gemSecondary.col+1}`));
+        this.gemSecondary.moveHorizontal('right', this.colHeight("sec", `col${this.gemSecondary.col+1}`));
         break;
         default:
         return; // Quit when this doesn't handle the key event.
