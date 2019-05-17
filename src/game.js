@@ -4,8 +4,8 @@ class Game {
   constructor(ctx) {
     this.ctx = ctx;
     this.renderGem = this.renderGem.bind(this);
-    this.gemPrimary = new Gems({ pos: { x: 150, y: 0 }, gemImages: this.randomGemImages(), col:"col4" });
-    this.gemSecondary = new Gems({ pos: { x: 150, y: -50 }, gemImages: this.randomGemImages(), col: "col4" });
+    this.gemPrimary = new Gems({ pos: { x: 150, y: 0 }, gemImages: this.randomGemImages(), col: 4 });
+    this.gemSecondary = new Gems({ pos: { x: 150, y: -50 }, gemImages: this.randomGemImages(), col: 4 });
     this.gemsFalling = false;
     this.gemStorage = {
       col1: [],
@@ -70,15 +70,21 @@ class Game {
     }
   }
 
+  dropBothGems(id) {
+    this.ctx.clearRect(0, 0, 300, 650);
+    this.gemSecondary.drop(this.ctx, id, this.colHeight("sec", `col${this.gemSecondary.col}`));
+    this.gemPrimary.drop(this.ctx, id, this.colHeight("prim", `col${this.gemPrimary.col}`));
+  }
+  
   renderGem() {
- 
+    
     let id = requestAnimationFrame(this.renderGem);
     console.log("Prim",this.gemPrimary.color);
     console.log("Sec",this.gemSecondary.color);
-
-    this.gemSecondary.drop(this.ctx, id, this.colHeight("sec", this.gemSecondary.col));
-    this.gemPrimary.drop(this.ctx, id, this.colHeight("prim", this.gemPrimary.col));
     
+    // this.gemSecondary.drop(this.ctx, id, this.colHeight("sec", `col${this.gemSecondary.col}`));
+    // this.gemPrimary.drop(this.ctx, id, this.colHeight("prim", `col${this.gemPrimary.col}`));
+    this.dropBothGems(id);
     window.addEventListener("keydown", (event) => {
       if (event.defaultPrevented) {
         return; // Do nothing if the event was already processed
@@ -119,12 +125,12 @@ class Game {
       this.gemPrimary = new Gems({ 
         pos: { x: 150, y: 0 }, 
         gemImages: this.randomGemImages(), 
-        col: "col4" 
+        col: 4 
       });
       this.gemSecondary = new Gems({ 
         pos: { x: 150, y: -50 }, 
         gemImages: this.randomGemImages(), 
-        col: "col4" 
+        col: 4 
       });
 
       if (prevHeightPrim > -50 && prevHeightSec > -50) {

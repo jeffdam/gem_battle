@@ -25,7 +25,6 @@ class Gems {
 
   drop(ctx, id, colHeight) {
     this.handleCollision(id, colHeight);
-    ctx.clearRect(0,0, 300, 650);
     this.posY += this.vel;
     this.render(ctx);
   }
@@ -33,8 +32,10 @@ class Gems {
   moveHorizontal(direction) {
     if (direction === "left" && this.posX > 0) {
       this.posX -= 50;
+      this.col -= 1;
     } else if (direction === "right" && this.posX < 250) {
       this.posX += 50;
+      this.col += 1;
     }
   }
 
