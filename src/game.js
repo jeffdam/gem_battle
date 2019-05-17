@@ -23,16 +23,46 @@ class Game {
   }
 
   renderGem() {
+    let currentGems = this.gems.slice(this.gems.length - 1)[0];
     let id = requestAnimationFrame(this.renderGem);
-    this.gems.slice(this.gems.length-1)[0].drop(this.ctx, id);
-    this.gems.slice(this.gems.length - 1)[0].moveHorizontal('left');
+    
+    currentGems.drop(this.ctx, id);
+    
+    window.addEventListener("keydown", (event) => {
+      if (event.defaultPrevented) {
+        return; // Do nothing if the event was already processed
+      }
+      currentGems = this.gems.slice(this.gems.length - 1)[0];
+
+      switch (event.key) {
+        case "Left": // IE/Edge specific value
+        case "ArrowLeft":
+          currentGems.moveHorizontal('left');
+          break;
+        case "Right": // IE/Edge specific value
+        case "ArrowRight":
+          currentGems.moveHorizontal('right');
+          break;
+        default:
+          return; // Quit when this doesn't handle the key event.
+      }
+      event.preventDefault();
+    }, true);
+
     this.gems.slice(0, this.gems.length-1).forEach(gem => {
       gem.render(this.ctx);
     });
+    
     if (this.gems.slice(this.gems.length - 1)[0].vel === 0) {
       const prevHeight = (this.gems.slice(this.gems.length - 1)[0].gem1.pos.y - 50);
+      const newGem = new Gems({ 
+        pos: { x: 150, y: 0 }, 
+        gemImages: this.randomGemImages(), 
+        prevHeight: prevHeight 
+      });
 
-      this.gems.push(new Gems({ pos: { x: 150, y: 0 }, gemImages: this.randomGemImages(), prevHeight: prevHeight}));
+      this.gems.push(newGem);
+
       if (prevHeight > -50) {
         this.renderGem();
       }
@@ -47,39 +77,3 @@ class Game {
 
 module.exports = Game;
 
-// window.addEventListener("keydown", function (event) {
-//   if (event.defaultPrevented) {
-//     return; // Do nothing if the event was already processed
-//   }
-
-//   switch (event.key) {
-//     case "Down": // IE/Edge specific value
-//     case "ArrowDown":
-//       // Do something for "down arrow" key press.
-//       break;
-//     case "Up": // IE/Edge specific value
-//     case "ArrowUp":
-//       // Do something for "up arrow" key press.
-//       break;
-//     case "Left": // IE/Edge specific value
-//     case "ArrowLeft":
-//       // Do something for "left arrow" key press.
-//       break;
-//     case "Right": // IE/Edge specific value
-//     case "ArrowRight":
-//       // Do something for "right arrow" key press.
-//       break;
-//     case "Enter":
-//       // Do something for "enter" or "return" key press.
-//       break;
-//     case "Esc": // IE/Edge specific value
-//     case "Escape":
-//       // Do something for "esc" key press.
-//       break;
-//     default:
-//       return; // Quit when this doesn't handle the key event.
-//   }
-
-//   // Cancel the default action to avoid it being handled twice
-//   event.preventDefault();
-// }, true);
