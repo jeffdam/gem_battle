@@ -40,6 +40,16 @@ class Gems {
     this.render(ctx);
   }
 
+  moveHorizontal(direction) {
+    if (direction === "left" && (this.gem1.pos.x > 0 && this.gem2.pos.x > 0 )) {
+      this.gem1.pos.x -= 50;
+      this.gem2.pos.x -= 50;
+    } else if (direction === "right" && (this.gem1.pos.x < 250 && this.gem2.pos.x < 250)) {
+      this.gem1.pos.x += 50;
+      this.gem2.pos.x += 50;
+    }
+  }
+
 }
 
 module.exports = Gems;
