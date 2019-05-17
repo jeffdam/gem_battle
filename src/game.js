@@ -57,44 +57,51 @@ class Game {
   }
 
   colHeight(gem, gemCol) {
-    if (this.gemStorage[gemCol].slice(this.gemStorage[gemCol].length - 1)[0]) {
-      if (gem === "sec" && this.gemPrimary.col === this.gemSecondary.col) {
-        return this.gemStorage[gemCol].slice(this.gemStorage[gemCol].length - 1)[0].posY;
+    if (this.gemStorage[gemCol]) {
+      if (this.gemStorage[gemCol].slice(this.gemStorage[gemCol].length - 1)[0]) {
+        if (gem === "sec" && this.gemPrimary.col === this.gemSecondary.col) {
+          return this.gemStorage[gemCol].slice(this.gemStorage[gemCol].length - 1)[0].posY;
+        } else {
+          return this.gemStorage[gemCol].slice(this.gemStorage[gemCol].length - 1)[0].posY - 50;
+        }
       } else {
-        return this.gemStorage[gemCol].slice(this.gemStorage[gemCol].length - 1)[0].posY - 50;
+        if (gem === "sec" && this.gemPrimary.col === this.gemSecondary.col) {
+          return 550;
+        } else {
+          return 600;
+        }
       }
     } else {
-      if (gem === "sec" && this.gemPrimary.col === this.gemSecondary.col) {
-        return 550;
-      } else {
-        return 600;
-      }
+      return undefined;
     }
   }
   
   renderGem() {
     let id = requestAnimationFrame(this.renderGem);
     
-    
     window.addEventListener("keydown", (event) => {
       if (event.defaultPrevented) {
         return; // Do nothing if the event was already processed
       }
-      
       switch (event.key) {
         case "Left": // IE/Edge specific value
         case "ArrowLeft":
-        // const gemPrimAdjColHeight = 
-        this.gemPrimary.moveHorizontal('left', this.colHeight("sec", `col${this.gemSecondary.col-1}`));
-        this.gemSecondary.moveHorizontal('left', this.colHeight("sec", `col${this.gemSecondary.col-1}`));
-        break;
+          this.gemPrimary.moveHorizontal('left', this.colHeight("sec", `col${this.gemSecondary.col-1}`));
+          this.gemSecondary.moveHorizontal('left', this.colHeight("sec", `col${this.gemSecondary.col-1}`));
+          break;
         case "Right": // IE/Edge specific value
         case "ArrowRight":
-        this.gemPrimary.moveHorizontal('right', this.colHeight("sec", `col${this.gemSecondary.col+1}`));
-        this.gemSecondary.moveHorizontal('right', this.colHeight("sec", `col${this.gemSecondary.col+1}`));
-        break;
+          this.gemPrimary.moveHorizontal('right', this.colHeight("sec", `col${this.gemSecondary.col+1}`));
+          this.gemSecondary.moveHorizontal('right', this.colHeight("sec", `col${this.gemSecondary.col+1}`));
+          break;
+        case "n":
+          this.gemSecondary.rotate('cw');
+          break;
+        case "m":
+          this.gemSecondary.rotate('ccw');
+          break;
         default:
-        return; // Quit when this doesn't handle the key event.
+          return; // Quit when this doesn't handle the key event.
       }
       event.preventDefault();
     }, true);
