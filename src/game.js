@@ -1,11 +1,12 @@
-const Gems = require('./gems')
+const GemPrimary = require('./gemPrimary');
+const GemSecondary = require('./gemSecondary');
 
 class Game {
   constructor(ctx) {
     this.ctx = ctx;
     this.renderGem = this.renderGem.bind(this);
-    this.gemPrimary = new Gems({ pos: { x: 150, y: 0 }, gemImages: this.randomGemImages(), col: 4 });
-    this.gemSecondary = new Gems({ pos: { x: 150, y: -50 }, gemImages: this.randomGemImages(), col: 4 });
+    this.gemPrimary = new GemPrimary({ gemImages: this.randomGemImages() });
+    this.gemSecondary = new GemSecondary({ gemImages: this.randomGemImages() });
     this.gemsFalling = false;
     this.gemStorage = {
       col1: [],
@@ -32,7 +33,9 @@ class Game {
   }
 
   storeCurrentGem(){
-    [this.gemPrimary, this.gemSecondary].forEach(gem => {
+    const gems = this.gemPrimary.posRel === 2 ? [this.gemPrimary, this.gemSecondary] : [this.gemSecondary, this.gemPrimary];
+
+    gems.forEach(gem => {
       switch(gem.posX) {
         case 0:
           this.gemStorage.col1.push(gem);
@@ -56,23 +59,16 @@ class Game {
     });
   }
 
-  colHeight(gem, gemCol) {
-    if (this.gemStorage[gemCol]) {
-      if (this.gemStorage[gemCol].slice(this.gemStorage[gemCol].length - 1)[0]) {
-        if (gem === "sec" && this.gemPrimary.col === this.gemSecondary.col) {
-          return this.gemStorage[gemCol].slice(this.gemStorage[gemCol].length - 1)[0].posY;
-        } else {
-          return this.gemStorage[gemCol].slice(this.gemStorage[gemCol].length - 1)[0].posY - 50;
-        }
+  colHeight(col) {
+    
+    if (this.gemStorage[col]) {
+      if (this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0]) {
+        return this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0].posY - 50;
       } else {
-        if (gem === "sec" && this.gemPrimary.col === this.gemSecondary.col) {
-          return 550;
-        } else {
-          return 600;
-        }
+        return 600;
       }
     } else {
-      return undefined;
+      return 0;
     }
   }
   
@@ -86,18 +82,20 @@ class Game {
       switch (event.key) {
         case "Left": // IE/Edge specific value
         case "ArrowLeft":
-          this.gemPrimary.moveHorizontal('left', this.colHeight("sec", `col${this.gemSecondary.col-1}`));
-          this.gemSecondary.moveHorizontal('left', this.colHeight("sec", `col${this.gemSecondary.col-1}`));
+          this.gemPrimary.moveHorizontal('left', this.colHeight(`col${this.gemPrimary.col-1}`));
+          this.gemSecondary.moveHorizontal('left', this.colHeight(`col${this.gemSecondary.col-1}`));
           break;
         case "Right": // IE/Edge specific value
         case "ArrowRight":
-          this.gemPrimary.moveHorizontal('right', this.colHeight("sec", `col${this.gemSecondary.col+1}`));
-          this.gemSecondary.moveHorizontal('right', this.colHeight("sec", `col${this.gemSecondary.col+1}`));
+          this.gemPrimary.moveHorizontal('right', this.colHeight(`col${this.gemPrimary.col+1}`));
+          this.gemSecondary.moveHorizontal('right', this.colHeight(`col${this.gemSecondary.col+1}`));
           break;
-        case "n":
+        case "z":
+          this.gemPrimary.rotate('cw');
           this.gemSecondary.rotate('cw');
           break;
-        case "m":
+        case "x":
+          this.gemPrimary.rotate('ccw');
           this.gemSecondary.rotate('ccw');
           break;
         default:
@@ -107,8 +105,18 @@ class Game {
     }, true);
     
     this.ctx.clearRect(0, 0, 300, 650);
-    this.gemSecondary.drop(this.ctx, id, this.colHeight("sec", `col${this.gemSecondary.col}`));
-    this.gemPrimary.drop(this.ctx, id, this.colHeight("prim", `col${this.gemPrimary.col}`));
+
+    const gemPrimCol = this.gemPrimary.col;
+    const gemSecCol = this.gemSecondary.col;
+
+    this.gemSecondary.drop(this.ctx, this.colHeight(`col${gemSecCol}`));
+    this.gemPrimary.drop(this.ctx, this.colHeight(`col${gemPrimCol}`));
+    
+    if (this.gemPrimary.vel === 0) {
+      this.gemSecondary.updateOtherVel(this.colHeight(`col${gemSecCol}`));
+    } else if (this.gemSecondary.vel === 0) {
+      this.gemPrimary.updateOtherVel(this.colHeight(`col${gemSecCol}`));
+    }
     
     for (let i = 1; i <= 6; i++) {
       this.gemStorage[`col${i}`].forEach(gem => {
@@ -116,27 +124,26 @@ class Game {
       });
     }
 
-    if (this.gemPrimary.vel === 0 || this.gemSecondary.vel === 0 ) {
-      const prevHeightPrim = (this.gemPrimary.posY - 50);
-      const prevHeightSec = (this.gemSecondary.posY - 50);
+    if (this.gemPrimary.vel === 0 && this.gemSecondary.vel === 0 ) {
+      cancelAnimationFrame(id);
 
       this.storeCurrentGem();
 
-      this.gemPrimary = new Gems({ 
-        pos: { x: 150, y: 0 }, 
+      this.gemPrimary = new GemPrimary({ 
         gemImages: this.randomGemImages(), 
-        col: 4 
       });
-      this.gemSecondary = new Gems({ 
-        pos: { x: 150, y: -50 }, 
+      this.gemSecondary = new GemSecondary({ 
         gemImages: this.randomGemImages(), 
-        col: 4 
       });
 
-      if (prevHeightPrim > -50 && prevHeightSec > -50) {
+      if (this.colHeight("col4") >= -50) {
         this.renderGem();
+      } else {
+        console.log(this.gemStorage);
+        console.log("YOU LOSE!");
       }
     }
+    
   }
   
   gameStart() {
