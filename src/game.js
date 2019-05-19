@@ -59,7 +59,8 @@ class Game {
     });
   }
 
-  colHeight(col) {
+  colHeight(colNum) {
+    const col = `col${colNum}`;
     if (this.gemStorage[col]) {
       if (this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0]) {
         return this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0].posY - 50;
@@ -71,10 +72,61 @@ class Game {
     }
   }
   
+  moveHorizontal(direction) {
+    if (direction === "left") {
+      this.gemPrimary.moveHorizontal('left', this.colHeight(this.gemPrimary.col - 1));
+      this.gemSecondary.moveHorizontal('left', this.colHeight(this.gemSecondary.col - 1));
+    } else {
+      this.gemPrimary.moveHorizontal('right', this.colHeight(this.gemPrimary.col + 1));
+      this.gemSecondary.moveHorizontal('right', this.colHeight(this.gemSecondary.col + 1));
+    }
+  }
 
   rotate(direction) {
     this.gemPrimary.rotate(direction);
     this.gemSecondary.rotate(direction);
+  }
+
+  rotateCW() {
+    let adjColHeight;
+    switch (this.gemSecondary.posRel) {
+      case 0:
+        adjColHeight = this.colHeight(this.gemSecondary.col + 1) - 50;
+        if (this.gemSecondary.posY < adjColHeight) { this.rotate('cw'); }
+        break;
+      case 1:
+        adjColHeight = this.colHeight(this.gemSecondary.col - 1) - 50;
+        if (this.gemSecondary.posY < this.colHeight(this.gemSecondary.col) && this.gemSecondary.posY < adjColHeight) { this.rotate('cw'); }
+        break;
+      case 2:
+        adjColHeight = this.colHeight(this.gemSecondary.col - 1);
+        if (this.gemSecondary.posY < adjColHeight) { this.rotate('cw'); }
+        break;
+      case 3:
+        this.rotate('cw');
+        break;
+    }
+  }
+
+  rotateCCW() {
+    let adjColHeight;
+    switch (this.gemSecondary.posRel) {
+      case 0:
+        adjColHeight = this.colHeight(this.gemSecondary.col - 1) - 50;
+        if (this.gemSecondary.posY < adjColHeight) { this.rotate('ccw'); }
+        break;
+      case 1:
+        this.rotate('ccw');
+        break;
+      case 2:
+        adjColHeight = this.colHeight(this.gemSecondary.col + 1);
+        if (this.gemSecondary.posY < adjColHeight) { this.rotate('ccw'); }
+        break;
+      case 3:
+        adjColHeight = this.colHeight(this.gemSecondary.col + 1) - 50;
+        if (this.gemSecondary.posY < this.colHeight(this.gemSecondary.col) && this.gemSecondary.posY < adjColHeight) { this.rotate('ccw'); }
+        break;
+    }
   }
 
   handleKeyEvent() {
@@ -82,55 +134,20 @@ class Game {
       if (event.defaultPrevented) {
         return; // Do nothing if the event was already processed
       }
-      let adjColHeight;
       switch (event.key) {
         case "Left": // IE/Edge specific value
         case "ArrowLeft":
-          this.gemPrimary.moveHorizontal('left', this.colHeight(`col${this.gemPrimary.col - 1}`));
-          this.gemSecondary.moveHorizontal('left', this.colHeight(`col${this.gemSecondary.col - 1}`));
+          this.moveHorizontal('left');
           break;
-        case "Right": // IE/Edge specific value
-        case "ArrowRight":
-          this.gemPrimary.moveHorizontal('right', this.colHeight(`col${this.gemPrimary.col + 1}`));
-          this.gemSecondary.moveHorizontal('right', this.colHeight(`col${this.gemSecondary.col + 1}`));
+          case "Right": // IE/Edge specific value
+          case "ArrowRight":
+          this.moveHorizontal('right');
           break;
         case "z": // Rotate Clockwise
-          switch (this.gemSecondary.posRel) {
-            case 0:
-              adjColHeight = this.colHeight(`col${this.gemSecondary.col + 1}`) - 50;
-              if (this.gemSecondary.posY < adjColHeight) { this.rotate('cw'); }
-              break;
-            case 1:
-              adjColHeight = this.colHeight(`col${this.gemSecondary.col - 1}`) - 50;
-              if (this.gemSecondary.posY < this.colHeight(`col${this.gemSecondary.col}`) && this.gemSecondary.posY < adjColHeight) { this.rotate('cw'); }
-              break;
-            case 2:
-              adjColHeight = this.colHeight(`col${this.gemSecondary.col - 1}`);
-              if (this.gemSecondary.posY < adjColHeight) { this.rotate('cw'); }
-              break;
-            case 3:
-              this.rotate('cw');
-              break;
-          }
+          this.rotateCW(); 
           break;
-        case "x":
-          switch (this.gemSecondary.posRel) {
-            case 0:
-              adjColHeight = this.colHeight(`col${this.gemSecondary.col - 1}`) - 50;
-              if (this.gemSecondary.posY < adjColHeight) { this.rotate('ccw'); }
-              break;
-            case 1:
-              this.rotate('ccw');
-              break;
-            case 2:
-              adjColHeight = this.colHeight(`col${this.gemSecondary.col + 1}`);
-              if (this.gemSecondary.posY < adjColHeight) { this.rotate('ccw'); }
-              break;
-            case 3:
-              adjColHeight = this.colHeight(`col${this.gemSecondary.col + 1}`) - 50;
-              if (this.gemSecondary.posY < this.colHeight(`col${this.gemSecondary.col}`) && this.gemSecondary.posY < adjColHeight) { this.rotate('ccw'); }
-              break;
-          }
+        case "x": // Rotate Counter-clockwise
+          this.rotateCCW();
           break;
         default:
           return; // Quit when this doesn't handle the key event.
@@ -145,13 +162,13 @@ class Game {
     this.handleKeyEvent();
     this.ctx.clearRect(0, 0, 300, 650);
 
-    this.gemSecondary.drop(this.ctx, this.colHeight(`col${this.gemSecondary.col}`));
-    this.gemPrimary.drop(this.ctx, this.colHeight(`col${this.gemPrimary.col}`));
+    this.gemSecondary.drop(this.ctx, this.colHeight(this.gemSecondary.col));
+    this.gemPrimary.drop(this.ctx, this.colHeight(this.gemPrimary.col));
     
     if (this.gemPrimary.vel === 0) {
-      this.gemSecondary.updateOtherVel(this.colHeight(`col${this.gemSecondary.col}`));
+      this.gemSecondary.updateOtherVel(this.colHeight(this.gemSecondary.col));
     } else if (this.gemSecondary.vel === 0) {
-      this.gemPrimary.updateOtherVel(this.colHeight(`col${this.gemPrimary.col}`));
+      this.gemPrimary.updateOtherVel(this.colHeight(this.gemPrimary.col));
     }
     
     for (let i = 1; i <= 6; i++) {
@@ -172,7 +189,7 @@ class Game {
         gemImages: this.randomGemImages(), 
       });
 
-      if (this.colHeight("col4") >= -50) {
+      if (this.colHeight(4) >= -50) {
         this.renderGem();
       } else {
         console.log(this.gemStorage);
