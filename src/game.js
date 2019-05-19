@@ -139,9 +139,11 @@ class Game {
         case "ArrowLeft":
           this.moveHorizontal('left');
           break;
-          case "Right": // IE/Edge specific value
-          case "ArrowRight":
-          this.moveHorizontal('right');
+        case "Right": // IE/Edge specific value
+        case "ArrowRight":
+          if ((this.gemPrimary.posRel === 3 && this.gemSecondary.posY < this.colHeight(this.gemSecondary.col + 1)) || (this.gemSecondary.posRel === 3 && this.gemPrimary.posY < this.colHeight(this.gemPrimary.col + 1)) || (this.gemPrimary.posRel !== 3) || (this.gemSecondary.posRel !== 3) ) {
+            this.moveHorizontal('right');
+          }
           break;
         case "z": // Rotate Clockwise
           this.rotateCW(); 
@@ -192,7 +194,6 @@ class Game {
       if (this.colHeight(4) >= -50) {
         this.renderGem();
       } else {
-        console.log(this.gemStorage);
         console.log("YOU LOSE!");
       }
     }
