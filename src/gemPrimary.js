@@ -3,7 +3,9 @@ class GemPrimary {
     this.posX = 150;
     this.posY = -5;
     this.color = gemImages.color;
-    this.img = gemImages.imgSrc;
+    const img = new Image();
+    img.src = gemImages.imgSrc;
+    this.img = img;
     this.widthHeight = 50;
     this.vel = 5;
     this.col = 4;
@@ -22,9 +24,7 @@ class GemPrimary {
   }
 
   render(ctx) {
-    const img = new Image();
-    img.src = this.img;
-    ctx.drawImage(img, this.posX, this.posY, this.widthHeight, this.widthHeight);
+    ctx.drawImage(this.img, this.posX, this.posY, this.widthHeight, this.widthHeight);
   }
 
   drop(ctx, colHeight) {
