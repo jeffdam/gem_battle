@@ -17,6 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const ctxnextGem = nextGem.getContext('2d');
 
   const game = new Game(ctxPF1, ctxScoreboard, ctxnextGem);
-
-  game.gameStart();
+    
+  game.startMenu();
 });
