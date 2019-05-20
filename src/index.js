@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const scoreboard = document.getElementById("scoreboard");
   scoreboard.width = 100;
-  scoreboard.height = 75;
+  scoreboard.height = 60;
   const ctxScoreboard = scoreboard.getContext('2d');
 
   const nextGem = document.getElementById("next-gems");
