@@ -39,7 +39,9 @@ class GemPrimary {
         if ((direction === "left") && ((this.posRel === 1 && this.col > 2) || (this.posRel !== 1 && this.col > 1))) {
           this.posX -= 50;
           this.col -= 1;
-        } else if ((direction === "right") && ((this.posRel === 3 && this.col < 5) || (this.posRel !== 3 && this.col < 6))) {
+        // } else if ((direction === "right") && ((this.posRel === 3 && this.col < 6) || (this.posRel !== 3 && this.col < 6))) {
+        // } else if (direction === "right" && this.col < 6) {
+        } else if (direction === "right") {
           this.posX += 50;
           this.col += 1;
         }

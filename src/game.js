@@ -27,9 +27,17 @@ class Game {
       { color: "blue", imgSrc: "../assets/images/SPF2T_Gem_Blue.png" },
       { color: "red", imgSrc: "../assets/images/SPF2T_Gem_Red.png" },
       { color: "green", imgSrc: "../assets/images/SPF2T_Gem_Green.png" },
-      { color: "yellow", imgSrc: "../assets/images/SPF2T_Gem_Yellow.png" }
+      { color: "yellow", imgSrc: "../assets/images/SPF2T_Gem_Yellow.png" },
+      // { color: "blue", imgSrc: "../assets/images/SPF2T_Gem_Blue.png" },
+      // { color: "red", imgSrc: "../assets/images/SPF2T_Gem_Red.png" },
+      // { color: "green", imgSrc: "../assets/images/SPF2T_Gem_Green.png" },
+      // { color: "yellow", imgSrc: "../assets/images/SPF2T_Gem_Yellow.png" },
+      // { color: "blueCrash", imgSrc: "../assets/images/SPF2T_Crash_Blue.png" },
+      // { color: "redCrash", imgSrc: "../assets/images/SPF2T_Crash_Red.png" },
+      // { color: "greenCrash", imgSrc: "../assets/images/SPF2T_Crash_Green.png" },
+      // { color: "yellowCrash", imgSrc: "../assets/images/SPF2T_Crash_Yellow.png" }
     ];
-    return gemImages[Math.floor(Math.random() * 4)];
+    return gemImages[Math.floor(Math.random() * gemImages.length)];
   }
 
   storeCurrentGem(){
@@ -137,13 +145,27 @@ class Game {
       switch (event.key) {
         case "Left": // IE/Edge specific value
         case "ArrowLeft":
-          this.moveHorizontal('left');
+          if (this.gemPrimary.posRel === 1 && this.gemSecondary.posY < this.colHeight(this.gemSecondary.col - 1)) {
+            this.gemPrimary.moveHorizontal('left', this.colHeight(this.gemSecondary.col));
+            this.gemSecondary.moveHorizontal('left', this.colHeight(this.gemSecondary.col - 1));
+          } else if (this.gemSecondary.posRel === 1 && this.gemPrimary.posY < this.colHeight(this.gemPrimary.col - 1)) {
+            this.gemPrimary.moveHorizontal('left', this.colHeight(this.gemPrimary.col - 1));
+            this.gemSecondary.moveHorizontal('left', this.colHeight(this.gemPrimary.col));
+          } else if (this.gemPrimary.posRel !== 3 && this.gemSecondary.posRel !== 3) {
+            this.moveHorizontal('left');
+          } 
           break;
         case "Right": // IE/Edge specific value
         case "ArrowRight":
-          if ((this.gemPrimary.posRel === 3 && this.gemSecondary.posY < this.colHeight(this.gemSecondary.col + 1)) || (this.gemSecondary.posRel === 3 && this.gemPrimary.posY < this.colHeight(this.gemPrimary.col + 1)) || (this.gemPrimary.posRel !== 3) || (this.gemSecondary.posRel !== 3) ) {
+          if (this.gemPrimary.posRel === 3 && this.gemSecondary.posY < this.colHeight(this.gemSecondary.col + 1)) {
+            this.gemPrimary.moveHorizontal('right', this.colHeight(this.gemSecondary.col));
+            this.gemSecondary.moveHorizontal('right', this.colHeight(this.gemSecondary.col + 1));
+          } else if (this.gemSecondary.posRel === 3 && this.gemPrimary.posY < this.colHeight(this.gemPrimary.col + 1)) {
+            this.gemPrimary.moveHorizontal('right', this.colHeight(this.gemPrimary.col + 1));
+            this.gemSecondary.moveHorizontal('right', this.colHeight(this.gemPrimary.col));
+          } else if (this.gemPrimary.posRel !== 3 && this.gemSecondary.posRel !== 3){
             this.moveHorizontal('right');
-          }
+          } 
           break;
         case "z": // Rotate Clockwise
           this.rotateCW(); 
@@ -184,12 +206,8 @@ class Game {
 
       this.storeCurrentGem();
 
-      this.gemPrimary = new GemPrimary({ 
-        gemImages: this.randomGemImages(), 
-      });
-      this.gemSecondary = new GemSecondary({ 
-        gemImages: this.randomGemImages(), 
-      });
+      this.gemPrimary = new GemPrimary({ gemImages: this.randomGemImages() });
+      this.gemSecondary = new GemSecondary({ gemImages: this.randomGemImages() });
 
       if (this.colHeight(4) >= -50) {
         this.renderGem();
