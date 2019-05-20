@@ -149,6 +149,7 @@ class Game {
     if (arr.length === 0) return arr;
     if (arr.slice(arr.length-1)[0].color !== color) return arr;
     arr.pop();
+    this.score += 50;
     return this.removeBelow(arr, color);
   }
 
@@ -156,6 +157,7 @@ class Game {
     if (arr.length === 0) return arr;
     if (arr[0].color !== color) return arr;
     arr.shift();
+    this.score += 50;
     return this.removeAbove(arr, color);
   }
 
@@ -320,18 +322,18 @@ class Game {
         this.score += 10;
         this.renderCycle();
       } else {
-        console.log(this.gemStorage);
         this.ctx.globalAlpha = 0.5;
         this.ctx.fillRect(0, 0, 300, 650);
         this.ctx.globalAlpha = 1;
-        
         this.ctx.fillRect(0, 275, 300, 100);
         this.ctx.fillStyle = "black";
         this.ctx.fillStyle = "red";
         this.ctx.font = "40px Permanent Marker";
-        this.ctx.fillText("GAME OVER", 10, 320);
-        this.ctx.font = "30px Permanent Marker";
-        this.ctx.fillText(`Your score: ${this.score}`, 10, 360);
+        this.ctx.textAlign = "center"; 
+        this.ctx.fillText("GAME OVER", 150, 330);
+        this.ctx.font = "20px Permanent Marker";
+        this.ctx.textAlign = "center"; 
+        this.ctx.fillText(`Your score: ${this.score}`, 150, 355);
       }
     }
   }
