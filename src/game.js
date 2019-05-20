@@ -142,16 +142,48 @@ class Game {
     }
   }
 
-  checkCol(col) {
-    
+
+  removeBelow(arr, color) {
+    if (arr.length === 0) return arr;
+    if (arr.slice(arr.length-1)[0].color !== color) return arr;
+    arr.pop();
+    return this.removeBelow(arr, color);
+  }
+
+  removeAbove(arr, color) {
+    if (arr.length === 0) return arr;
+    if (arr[0].color !== color) return arr;
+    arr.shift();
+    return this.removeAbove(arr, color);
+  }
+
+  checkCol(colNum, idx, color) {
+    const col = `col${colNum}`;
+    let column = this.gemStorage[col];
+    const below = column.slice(0, idx);
+    const above = column.slice(idx+1);
+    const belowLength = below.length; 
+    const aboveLength = above.length; 
+    const belowRemoved = this.removeBelow(below, color);
+    const aboveRemoved = this.removeAbove(above, color);
+    console.log("below: ", below, belowRemoved);
+    console.log("above: ", above, aboveRemoved);
+    if (!(belowLength === belowRemoved.length && aboveLength === aboveRemoved.length)) {
+      this.gemStorage[col] = belowRemoved.concat(aboveRemoved);
+      this.gemStorage[col].forEach((gem,idx) => {
+        if (idx > 0) {
+          gem.updatePosY(this.gemStorage[col][idx-1].posY - 50);
+        }
+      })
+    }
   }
 
   checkCrash() {
     // let crashPresent = true;
     for (let i = 1; i <= 6; i++) {
-      this.gemStorage[`col${i}`].forEach(gem => {
+      this.gemStorage[`col${i}`].forEach((gem,idx) => {
         if (gem.type === "crash") {
-          console.log("CRASH!");
+          this.checkCol(i, idx, gem.color);
         }
       });
     }
