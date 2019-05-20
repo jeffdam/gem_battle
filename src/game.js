@@ -37,23 +37,23 @@ class Game {
     this.ctx.textAlign = "center";
     this.ctx.fillStyle = "white";
     this.ctx.font = "24px Permanent Marker";
-    this.ctx.fillText("Welcome to Gem Battle!", 150, 40, 300);
+    this.ctx.fillText("Welcome to Gem Battle!", 150, 40, 280);
     this.ctx.font = "20px Permanent Marker";
     
-    this.ctx.fillText("Clear as many gems as you can!", 150, 100, 300);
-    this.ctx.fillText("Use left arrow to move left.", 150, 130, 300);
-    this.ctx.fillText("Use right arrow to move right.", 150, 160, 300);
-    this.ctx.fillText("Use 'z' to rotate clockwise.", 150, 190, 300);
-    this.ctx.fillText("Use 'x' to rotate counter-clockwise.", 150, 220, 300);
+    this.ctx.fillText("Clear as many gems as you can!", 150, 100, 280);
+    this.ctx.fillText("Use left arrow to move left.", 150, 130, 280);
+    this.ctx.fillText("Use right arrow to move right.", 150, 160, 280);
+    this.ctx.fillText("Use 'z' to rotate clockwise.", 150, 190, 280);
+    this.ctx.fillText("Use 'x' to rotate counter-clockwise.", 150, 220, 280);
     
-    this.ctx.fillText("Place similar colored gems next", 150, 280, 300);
-    this.ctx.fillText("to each other. Use the round gems", 150, 310, 300);
-    this.ctx.fillText("to clear the same colored gems.", 150, 340, 300);
-    this.ctx.fillText("The game is over when the drop", 150, 370, 300);
-    this.ctx.fillText("alley is blocked.", 150, 400, 300);
+    this.ctx.fillText("Place similar colored gems next", 150, 280, 280);
+    this.ctx.fillText("to each other. Use the round gems", 150, 310, 280);
+    this.ctx.fillText("to clear the same colored gems.", 150, 340, 280);
+    this.ctx.fillText("The game is over when the drop", 150, 370, 280);
+    this.ctx.fillText("alley is blocked.", 150, 400, 280);
     
     this.ctx.font = "30px Permanent Marker";
-    this.ctx.fillText("Press Enter to Start", 150, 460, 300);
+    this.ctx.fillText("Press Enter to Start", 150, 460, 280);
     
     if (this.gameinProgress === false) {
       window.addEventListener("keydown", (event) => {
