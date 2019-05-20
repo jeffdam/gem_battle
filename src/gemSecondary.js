@@ -3,7 +3,7 @@ const GemPrimary = require('./gemPrimary');
 class GemSecondary extends GemPrimary {
   constructor({ ctx, gem }) {
     super({ ctx, gem });
-    this.posY = 60;
+    this.posY = 10;
     this.posRel = 0;
   }
 

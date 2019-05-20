@@ -2,7 +2,7 @@ class GemPrimary {
   constructor({ ctx, gem }) {
     this.ctx = ctx;
     this.posX = 10;
-    this.posY = 10;
+    this.posY = 60;
     this.color = gem.color;
     this.type = gem.type;
     const img = new Image();
@@ -19,6 +19,10 @@ class GemPrimary {
     if ((this.posRel === 0 && this.posY >= colHeight - 50) || (this.posRel !== 0 && this.posY >= colHeight)) {
       this.vel = 0;
     }
+  }
+
+  updatePosY(newPosY) {
+    this.posY = newPosY;
   }
 
   goLive(ctx) {
