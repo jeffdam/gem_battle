@@ -264,7 +264,6 @@ class Game {
         this.renderCycle();
       } else {
         console.log("GAME OVER!");
-        console.log("Final Score: ", this.score);
       }
     }
   }
