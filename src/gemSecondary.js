@@ -1,15 +1,14 @@
 const GemPrimary = require('./gemPrimary');
 
 class GemSecondary extends GemPrimary {
-  constructor({ ctx, gemImages }) {
-    super({ ctx, gemImages });
-    this.posY = -55;
+  constructor({ ctx, gem }) {
+    super({ ctx, gem });
+    this.posY = 60;
     this.posRel = 0;
   }
 
   goLive(ctx) {
-    this.ctx = ctx;
-    this.posX = 150;
+    super.goLive(ctx);
     this.posY = -55;
   }
 

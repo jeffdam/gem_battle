@@ -6,10 +6,10 @@ class Game {
     this.ctx = ctx;
     this.ctxScoreboard = ctxScoreboard;
     this.ctxNextGem = ctxNextGem;
-    this.gemPrimaryLive = new GemPrimary({ ctx: this.ctx, gemImages: this.randomGemImages() });
-    this.gemSecondaryLive = new GemSecondary({ ctx: this.ctx, gemImages: this.randomGemImages() });
-    this.gemPrimaryStaging = new GemPrimary({ ctx: this.ctxNextGem, gemImages: this.randomGemImages() });
-    this.gemSecondaryStaging = new GemSecondary({ ctx: this.ctxNextGem, gemImages: this.randomGemImages() });
+    this.gemPrimaryLive = undefined;
+    this.gemSecondaryLive = undefined;
+    this.gemPrimaryStaging = new GemPrimary({ ctx: this.ctxNextGem, gem: this.randomGemImages() });
+    this.gemSecondaryStaging = new GemSecondary({ ctx: this.ctxNextGem, gem: this.randomGemImages() });
     this.gemsFalling = false;
     this.gemStorage = {
       col1: [],
@@ -29,18 +29,18 @@ class Game {
       // { color: "red", imgSrc: "./assets/images/cat.png" },
       // { color: "green", imgSrc: "./assets/images/cat.png" },
       // { color: "yellow", imgSrc: "./assets/images/cat.png" }
-      { color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
-      { color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
-      { color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
-      // { color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      // { color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
-      // { color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
-      // { color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
-      // { color: "blueCrash", imgSrc: "./assets/images/SPF2T_Crash_Blue.png" },
-      // { color: "redCrash", imgSrc: "./assets/images/SPF2T_Crash_Red.png" },
-      // { color: "greenCrash", imgSrc: "./assets/images/SPF2T_Crash_Green.png" },
-      // { color: "yellowCrash", imgSrc: "./assets/images/SPF2T_Crash_Yellow.png" }
+      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
+      { type: "gem", color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
+      { type: "gem", color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
+      { type: "gem", color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
+      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
+      { type: "gem", color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
+      { type: "gem", color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
+      { type: "gem", color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
+      { type: "crash", color: "blue", imgSrc: "./assets/images/SPF2T_Crash_Blue.png" },
+      { type: "crash", color: "red", imgSrc: "./assets/images/SPF2T_Crash_Red.png" },
+      { type: "crash", color: "green", imgSrc: "./assets/images/SPF2T_Crash_Green.png" },
+      { type: "crash", color: "yellow", imgSrc: "./assets/images/SPF2T_Crash_Yellow.png" }
     ];
     return gemImages[Math.floor(Math.random() * gemImages.length)];
   }
@@ -142,6 +142,16 @@ class Game {
     }
   }
 
+  checkCrash() {
+    for (let i = 1; i <= 6; i++) {
+      this.gemStorage[`col${i}`].forEach(gem => {
+        if (gem.type === "crash") {
+          console.log("CRASH!");
+        }
+      });
+    }
+  }
+
   handleKeyEvent() {
     window.addEventListener("keydown", (event) => {
       if (event.defaultPrevented) {
@@ -185,8 +195,27 @@ class Game {
     }, true);
   }
 
+  moveStagingToLive() {
+    this.gemPrimaryStaging.goLive(this.ctx);
+    this.gemPrimaryLive = this.gemPrimaryStaging;
+    this.gemPrimaryStaging = new GemPrimary({ ctx: this.ctxNextGem, gem: this.randomGemImages() });
+    this.gemSecondaryStaging.goLive(this.ctx);
+    this.gemSecondaryLive = this.gemSecondaryStaging;
+    this.gemSecondaryStaging = new GemSecondary({ ctx: this.ctxNextGem, gem: this.randomGemImages() });
+  }
+
+  renderStaging() {
+    this.gemPrimaryStaging.render();
+    this.gemSecondaryStaging.render();
+  }
+
   renderGems() {    
     this.handleKeyEvent();
+
+    if (!this.gemPrimaryLive) {
+      this.moveStagingToLive();
+    }
+
     this.gemSecondaryLive.drop(this.colHeight(this.gemSecondaryLive.col));
     this.gemPrimaryLive.drop(this.colHeight(this.gemPrimaryLive.col));
     if (this.gemPrimaryLive.vel === 0) {
@@ -205,19 +234,20 @@ class Game {
   }
 
   updateScore() {
-    this.ctxScoreboard.font = "30px Arial";
-    this.ctxScoreboard.fillText(this.score, 10, 50);
+    this.ctxScoreboard.font = "30px Permanent Marker";
+    this.ctxScoreboard.strokeStyle = "white";
+    this.ctxScoreboard.strokeText(this.score, 10, 40);
   }
 
   renderCycle() {
     let id = requestAnimationFrame(this.renderCycle);
 
     this.ctx.clearRect(0, 0, 300, 650);
-    this.ctxScoreboard.clearRect(0, 0, 300, 650);
+    this.ctxNextGem.clearRect(0, 0, 300, 650);
     this.ctxScoreboard.clearRect(0, 0, 300, 650);
 
     this.renderGemStorage();
-
+    this.renderStaging();
     this.renderGems();
 
     this.updateScore();
@@ -226,13 +256,11 @@ class Game {
       cancelAnimationFrame(id);
 
       this.storeCurrentGem();
-      
-      this.gemPrimaryLive = new GemPrimary({ ctx: this.ctx, gemImages: this.randomGemImages() });
-      this.gemSecondaryLive = new GemSecondary({ ctx: this.ctx, gemImages: this.randomGemImages() });
+      this.moveStagingToLive();
+      this.checkCrash();
 
       if (this.colHeight(4) >= -50) {
         this.score += 10;
-        console.log("score: ", this.score);
         this.renderCycle();
       } else {
         console.log("GAME OVER!");

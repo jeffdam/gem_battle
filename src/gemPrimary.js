@@ -1,11 +1,12 @@
 class GemPrimary {
-  constructor({ ctx, gemImages }) {
+  constructor({ ctx, gem }) {
     this.ctx = ctx;
-    this.posX = 150;
-    this.posY = -5;
-    this.color = gemImages.color;
+    this.posX = 10;
+    this.posY = 10;
+    this.color = gem.color;
+    this.type = gem.type;
     const img = new Image();
-    img.src = gemImages.imgSrc;
+    img.src = gem.imgSrc;
     this.img = img;
     this.widthHeight = 50;
     this.vel = 5;
@@ -30,7 +31,7 @@ class GemPrimary {
     this.otherVel = 0;
   }
 
-  render(ctx) {
+  render() {
     this.ctx.drawImage(this.img, this.posX, this.posY, this.widthHeight, this.widthHeight);
   }
 
