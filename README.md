@@ -1,5 +1,7 @@
 # Gem Battle
 
+[Live Link](https://jeffdam.github.io/gem_battle/)
+
 ## Background and Overview
 Gem Battle is a two-player game in which players battle each other with the goal of overpowering their opponent. 
 
