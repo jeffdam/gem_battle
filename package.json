@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/jeffdam/gem_battle/issues"
   },
-  "homepage": "https://github.com/jeffdam/gem_battle#readme"
+  "homepage": "https://github.com/jeffdam/gem_battle#readme",
+  "dependencies": {
+    "howler": "^2.1.2",
+    "webpack": "^4.31.0"
+  }
 }
