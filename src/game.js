@@ -23,6 +23,54 @@ class Game {
     };
     this.score = 0;
     this.renderCycle = this.renderCycle.bind(this);
+    this.gameinProgress = false;
+  }
+
+  startMenu() {
+    this.ctxNextGem.fillRect(0,0,300, 650);
+    this.ctxNextGem.fillStyle = "black";
+    this.ctxScoreboard.fillRect(0,0,300, 650);
+    this.ctxScoreboard.fillStyle = "black";
+
+    this.ctx.fillRect(0,0,300, 650);
+    this.ctx.fillStyle = "black";
+    this.ctx.textAlign = "center";
+    this.ctx.fillStyle = "white";
+    this.ctx.font = "24px Permanent Marker";
+    this.ctx.fillText("Welcome to Gem Battle!", 150, 40, 300);
+    this.ctx.font = "20px Permanent Marker";
+    
+    this.ctx.fillText("Clear as many gems as you can!", 150, 100, 300);
+    this.ctx.fillText("Use left arrow to move left.", 150, 130, 300);
+    this.ctx.fillText("Use right arrow to move right.", 150, 160, 300);
+    this.ctx.fillText("Use 'z' to rotate clockwise.", 150, 190, 300);
+    this.ctx.fillText("Use 'x' to rotate counter-clockwise.", 150, 220, 300);
+    
+    this.ctx.fillText("Place similar colored gems next", 150, 280, 300);
+    this.ctx.fillText("to each other. Use the round gems", 150, 310, 300);
+    this.ctx.fillText("to clear the same colored gems.", 150, 340, 300);
+    this.ctx.fillText("The game is over when the drop", 150, 370, 300);
+    this.ctx.fillText("alley is blocked.", 150, 400, 300);
+    
+    this.ctx.font = "30px Permanent Marker";
+    this.ctx.fillText("Press Enter to Start", 150, 460, 300);
+    
+    if (this.gameinProgress === false) {
+      window.addEventListener("keydown", (event) => {
+        if (event.defaultPrevented) {
+          return;
+        }
+        switch (event.key) {
+          case "Enter": 
+            this.gameinProgress = true;
+            this.gameStart();
+            break;
+          default:
+            return; 
+        }
+        event.preventDefault();
+      }, true);
+    }
   }
 
   randomGemImages() {
@@ -322,11 +370,13 @@ class Game {
         this.score += 10;
         this.renderCycle();
       } else {
+        this.gameinProgress = false;
+
+        this.ctx.fillStyle = "black";
         this.ctx.globalAlpha = 0.5;
         this.ctx.fillRect(0, 0, 300, 650);
         this.ctx.globalAlpha = 1;
         this.ctx.fillRect(0, 275, 300, 100);
-        this.ctx.fillStyle = "black";
         this.ctx.fillStyle = "red";
         this.ctx.font = "40px Permanent Marker";
         this.ctx.textAlign = "center"; 
