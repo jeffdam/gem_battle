@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ctxPF1 = canvasPF1.getContext('2d');
 
   const scoreboard = document.getElementById("scoreboard");
-  scoreboard.width = 100;
+  scoreboard.width = 150;
   scoreboard.height = 60;
   const ctxScoreboard = scoreboard.getContext('2d');
 
