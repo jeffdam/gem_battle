@@ -1,5 +1,4 @@
-const Game = require('./game')
-
+const Game = require('./game');
 
 document.addEventListener('DOMContentLoaded', () => {
   const canvasPF1 = document.getElementById("play-field-1");

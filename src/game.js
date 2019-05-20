@@ -4,9 +4,8 @@ const GemSecondary = require('./gemSecondary');
 class Game {
   constructor(ctx) {
     this.ctx = ctx;
-    this.renderGem = this.renderGem.bind(this);
-    this.gemPrimary = new GemPrimary({ gemImages: this.randomGemImages() });
-    this.gemSecondary = new GemSecondary({ gemImages: this.randomGemImages() });
+    this.gemPrimary = new GemPrimary({ ctx: this.ctx, gemImages: this.randomGemImages() });
+    this.gemSecondary = new GemSecondary({ ctx: this.ctx, gemImages: this.randomGemImages() });
     this.gemsFalling = false;
     this.gemStorage = {
       col1: [],
@@ -16,6 +15,8 @@ class Game {
       col5: [],
       col6: [],
     };
+    this.score = 0;
+    this.renderCycle = this.renderCycle.bind(this);
   }
 
   randomGemImages() {
@@ -24,10 +25,10 @@ class Game {
       // { color: "red", imgSrc: "../assets/images/cat.png" },
       // { color: "green", imgSrc: "../assets/images/cat.png" },
       // { color: "yellow", imgSrc: "../assets/images/cat.png" }
-      { color: "blue", imgSrc: "../assets/images/SPF2T_Gem_Blue.png" },
-      { color: "red", imgSrc: "../assets/images/SPF2T_Gem_Red.png" },
-      { color: "green", imgSrc: "../assets/images/SPF2T_Gem_Green.png" },
-      { color: "yellow", imgSrc: "../assets/images/SPF2T_Gem_Yellow.png" },
+      { color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
+      { color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
+      { color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
+      { color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
       // { color: "blue", imgSrc: "../assets/images/SPF2T_Gem_Blue.png" },
       // { color: "red", imgSrc: "../assets/images/SPF2T_Gem_Red.png" },
       // { color: "green", imgSrc: "../assets/images/SPF2T_Gem_Green.png" },
@@ -180,46 +181,55 @@ class Game {
     }, true);
   }
 
-  renderGem() {
-    let id = requestAnimationFrame(this.renderGem);
-    
+  renderGems() {    
     this.handleKeyEvent();
-    this.ctx.clearRect(0, 0, 300, 650);
-
-    this.gemSecondary.drop(this.ctx, this.colHeight(this.gemSecondary.col));
-    this.gemPrimary.drop(this.ctx, this.colHeight(this.gemPrimary.col));
-    
+    this.gemSecondary.drop(this.colHeight(this.gemSecondary.col));
+    this.gemPrimary.drop(this.colHeight(this.gemPrimary.col));
     if (this.gemPrimary.vel === 0) {
-      this.gemSecondary.updateOtherVel(this.colHeight(this.gemSecondary.col));
+      this.gemSecondary.updateOtherVel();
     } else if (this.gemSecondary.vel === 0) {
-      this.gemPrimary.updateOtherVel(this.colHeight(this.gemPrimary.col));
+      this.gemPrimary.updateOtherVel();
     }
-    
+  }
+
+  renderGemStorage() {
     for (let i = 1; i <= 6; i++) {
       this.gemStorage[`col${i}`].forEach(gem => {
-        gem.render(this.ctx);
+        gem.render();
       });
     }
+  }
 
-    if (this.gemPrimary.vel === 0 && this.gemSecondary.vel === 0 ) {
+  renderCycle() {
+    let id = requestAnimationFrame(this.renderCycle);
+
+    this.ctx.clearRect(0, 0, 300, 650);
+
+    this.renderGemStorage();
+
+    this.renderGems();
+
+    if (this.gemPrimary.vel === 0 && this.gemSecondary.vel === 0) {
       cancelAnimationFrame(id);
 
       this.storeCurrentGem();
-
-      this.gemPrimary = new GemPrimary({ gemImages: this.randomGemImages() });
-      this.gemSecondary = new GemSecondary({ gemImages: this.randomGemImages() });
+      
+      this.gemPrimary = new GemPrimary({ ctx: this.ctx, gemImages: this.randomGemImages() });
+      this.gemSecondary = new GemSecondary({ ctx: this.ctx, gemImages: this.randomGemImages() });
 
       if (this.colHeight(4) >= -50) {
-        this.renderGem();
+        this.score += 10;
+        console.log("score: ", this.score);
+        this.renderCycle();
       } else {
-        console.log("YOU LOSE!");
+        console.log("GAME OVER!");
+        console.log("Final Score: ", this.score);
       }
     }
-    
   }
   
   gameStart() {
-    this.renderGem();
+    this.renderCycle();
   }
  
 }

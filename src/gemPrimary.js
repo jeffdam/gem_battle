@@ -1,5 +1,6 @@
 class GemPrimary {
-  constructor({ gemImages }) {
+  constructor({ ctx, gemImages }) {
+    this.ctx = ctx;
     this.posX = 150;
     this.posY = -5;
     this.color = gemImages.color;
@@ -19,28 +20,26 @@ class GemPrimary {
     }
   }
 
-  updateOtherVel(colHeight) {
+  updateOtherVel() {
     this.otherVel = 0;
   }
 
   render(ctx) {
-    ctx.drawImage(this.img, this.posX, this.posY, this.widthHeight, this.widthHeight);
+    this.ctx.drawImage(this.img, this.posX, this.posY, this.widthHeight, this.widthHeight);
   }
 
-  drop(ctx, colHeight) {
+  drop(colHeight) {
     this.posY += this.vel;
     this.handleCollision(colHeight);
-    this.render(ctx);
+    this.render();
   }
 
   moveHorizontal(direction, adjColHeight) {
     if (this.otherVel !== 0 && this.vel !== 0) {
       if ((this.posRel === 0 && this.posY < adjColHeight - 50) || (this.posRel !== 0 && this.posY < adjColHeight)) {
-        if ((direction === "left") && ((this.posRel === 1 && this.col > 2) || (this.posRel !== 1 && this.col > 1))) {
+        if (direction === "left") {
           this.posX -= 50;
           this.col -= 1;
-        // } else if ((direction === "right") && ((this.posRel === 3 && this.col < 6) || (this.posRel !== 3 && this.col < 6))) {
-        // } else if (direction === "right" && this.col < 6) {
         } else if (direction === "right") {
           this.posX += 50;
           this.col += 1;
