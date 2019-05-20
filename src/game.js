@@ -142,7 +142,12 @@ class Game {
     }
   }
 
+  checkCol(col) {
+    
+  }
+
   checkCrash() {
+    // let crashPresent = true;
     for (let i = 1; i <= 6; i++) {
       this.gemStorage[`col${i}`].forEach(gem => {
         if (gem.type === "crash") {
