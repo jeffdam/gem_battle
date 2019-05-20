@@ -20,6 +20,12 @@ class GemPrimary {
     }
   }
 
+  goLive(ctx) {
+    this.ctx = ctx;
+    this.posX = 150;
+    this.posY = -5;
+  }
+
   updateOtherVel() {
     this.otherVel = 0;
   }

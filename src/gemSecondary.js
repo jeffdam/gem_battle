@@ -7,6 +7,12 @@ class GemSecondary extends GemPrimary {
     this.posRel = 0;
   }
 
+  goLive(ctx) {
+    this.ctx = ctx;
+    this.posX = 150;
+    this.posY = -55;
+  }
+
   rotate(direction) {
     if (this.otherVel !== 0 && this.vel !== 0) {
       if (direction === 'cw') {
