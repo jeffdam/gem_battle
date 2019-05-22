@@ -12,7 +12,6 @@ class Game {
     this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem);
     this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem);
     this.gemNull = new GemNull(this.ctx);
-    this.gemsFalling = false;
     this.gemStorage = [
       [this.gemNull],
       [this.gemNull],
@@ -23,6 +22,7 @@ class Game {
     ];
     this.score = 0;
     this.renderCycle = this.renderCycle.bind(this);
+    this.updateGem = this.updateGem.bind(this);
     this.deleteArr = [[],[],[],[],[],[]];
   }
 
@@ -36,9 +36,9 @@ class Game {
     this.ctx.fillStyle = "black";
     this.ctx.textAlign = "center";
     this.ctx.fillStyle = "white";
-    this.ctx.font = "24px Permanent Marker";
+    this.ctx.font = "24px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif, Arial";
     this.ctx.fillText("Welcome to Gem Battle!", 150, 40, 280);
-    this.ctx.font = "20px Permanent Marker";
+    this.ctx.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
     
     this.ctx.fillText("Clear as many gems as you can!", 150, 100, 280);
     this.ctx.fillText("Use left arrow to move left.", 150, 130, 280);
@@ -52,7 +52,7 @@ class Game {
     this.ctx.fillText("The game is over when the drop", 150, 370, 280);
     this.ctx.fillText("alley is blocked.", 150, 400, 280);
     
-    this.ctx.font = "30px Permanent Marker";
+    this.ctx.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
     this.ctx.fillText("Press Enter to Start", 150, 460, 280);
     
     const handleEnter = (event) => {
@@ -103,11 +103,7 @@ class Game {
 
   colHeight(col) {
     if (this.gemStorage[col]) {
-      if (this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0]) {
-        return this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0].posY - 50;
-      } else {
-        return 600;
-      }
+      return this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0].posY - 50;
     } else {
       return 0;
     }
@@ -252,7 +248,7 @@ class Game {
     return hasAdj;
   }
 
-  checkCrash() {
+  checkCrashGems() {
     this.gemStorage.forEach((col, colNum) => {
       col.forEach((gem,idx) => {
         if (gem.type === "crash") {
@@ -268,6 +264,30 @@ class Game {
       });
     });
   }
+
+  updateGem(gem, colHeight){
+    let id = requestAnimationFrame((gem, colHeight) => this.updateGem(gem, colHeight));
+    gem.drop(colHeight, 10);
+    if (gem.vel === 0) {
+      cancelAnimationFrame(id);
+    }
+  }
+
+  handleCrashGems() {
+    this.checkCrashGems();
+    for (let colNum = 0; colNum < 6; colNum++) {
+      this.gemStorage[colNum] = this.gemStorage[colNum].filter((gem, gemIdx) => !this.deleteArr[colNum].includes(gemIdx));
+    }
+    this.deleteArr = [[], [], [], [], [], []];
+    this.gemStorage.forEach((col, colNum) => {
+      col.forEach((gem, idx) => {
+        if (idx > 0 && gem.posY < col[idx - 1].posY - 50) {
+          this.updateGem(gem, col[idx-1].posY-50);
+        }
+      });
+    });
+  }
+
 
   handleKeyEvent() {
     window.addEventListener("keydown", (event) => {
@@ -351,7 +371,7 @@ class Game {
   }
 
   updateScore() {
-    this.ctxScoreboard.font = "30px Permanent Marker";
+    this.ctxScoreboard.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
     this.ctxScoreboard.strokeStyle = "white";
     this.ctxScoreboard.strokeText(this.score, 10, 40);
   }
@@ -374,32 +394,69 @@ class Game {
 
       this.storeCurrentGem();
       this.moveStagingToLive();
-      this.checkCrash();
+      
+      this.handleCrashGems();
+
 
       if (this.colHeight(3) >= -50) {
         this.score += 10;
         this.renderCycle();
       } else {
-        debugger;
-
         this.ctx.fillStyle = "black";
         this.ctx.globalAlpha = 0.5;
         this.ctx.fillRect(0, 0, 300, 650);
         this.ctx.globalAlpha = 1;
-        this.ctx.fillRect(0, 275, 300, 100);
+        this.ctx.fillRect(0, 275, 300, 130);
         this.ctx.fillStyle = "red";
-        this.ctx.font = "40px Permanent Marker";
+        // this.ctx.font = "40px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
+        this.ctx.font = "40px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
         this.ctx.textAlign = "center"; 
         this.ctx.fillText("GAME OVER", 150, 330);
-        this.ctx.font = "20px Permanent Marker";
+        this.ctx.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
         this.ctx.textAlign = "center"; 
         this.ctx.fillText(`Your score: ${this.score}`, 150, 355);
+        this.ctx.fillText(`Press Enter to play again.`, 150, 385);
+
+        const handleEnter = (event) => {
+          if (event.defaultPrevented) {
+            return;
+          }
+          switch (event.key) {
+            case "Enter":
+              this.gameStart();
+              break;
+            default:
+              return;
+          }
+          event.preventDefault();
+          window.removeEventListener("keydown", handleEnter, true);
+        };
+
+        window.addEventListener("keydown", handleEnter, true);
       }
     }
   }
   
   gameStart() {
+    if (this.gemPrimaryLive) this.reset();
     this.renderCycle();
+  }
+
+  reset() {
+    this.gemPrimaryLive = undefined;
+    this.gemSecondaryLive = undefined;
+    this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem);
+    this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem);
+    this.gemStorage = [
+      [this.gemNull],
+      [this.gemNull],
+      [this.gemNull],
+      [this.gemNull],
+      [this.gemNull],
+      [this.gemNull],
+    ];
+    this.score = 0;
+    this.deleteArr = [[], [], [], [], [], []];
   }
  
 }

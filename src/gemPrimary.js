@@ -58,8 +58,9 @@ class GemPrimary {
     this.ctx.drawImage(this.img, this.posX, this.posY, this.widthHeight, this.widthHeight);
   }
 
-  drop(colHeight) {
-    this.posY += this.vel;
+  drop(colHeight, vel = this.vel) {
+    this.vel = vel;
+    this.posY += vel;
     this.handleCollision(colHeight);
     this.render();
   }
