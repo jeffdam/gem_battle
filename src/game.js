@@ -23,7 +23,6 @@ class Game {
     ];
     this.score = 0;
     this.renderCycle = this.renderCycle.bind(this);
-    this.gameinProgress = false;
     this.deleteArr = [[],[],[],[],[],[]];
   }
 
@@ -56,22 +55,23 @@ class Game {
     this.ctx.font = "30px Permanent Marker";
     this.ctx.fillText("Press Enter to Start", 150, 460, 280);
     
-    if (this.gameinProgress === false) {
-      window.addEventListener("keydown", (event) => {
-        if (event.defaultPrevented) {
+    const handleEnter = (event) => {
+      if (event.defaultPrevented) {
+        return;
+      }
+      switch (event.key) {
+        case "Enter":
+          this.gameStart();
+          break;
+        default:
           return;
-        }
-        switch (event.key) {
-          case "Enter": 
-            this.gameinProgress = true;
-            this.gameStart();
-            break;
-          default:
-            return; 
-        }
-        event.preventDefault();
-      }, true);
-    }
+      }
+      event.preventDefault();
+      window.removeEventListener("keydown", handleEnter, true);
+    };
+
+    window.addEventListener("keydown", handleEnter , true);
+
   }
 
   storeCurrentGem(){
@@ -170,67 +170,75 @@ class Game {
     }
   }
 
-
-  // removeBelow(arr, color) {
-  //   if (arr.length === 0) return arr;
-  //   if (arr.slice(arr.length-1)[0].color !== color) return arr;
-  //   arr.pop();
-  //   this.score += 50;
-  //   return this.removeBelow(arr, color);
-  // }
-
-  // removeAbove(arr, color) {
-  //   if (arr.length === 0) return arr;
-  //   if (arr[0].color !== color) return arr;
-  //   arr.shift();
-  //   this.score += 50;
-  //   return this.removeAbove(arr, color);
-  // }
-
-  checkCol(col, idx, color) {
-    let column = this.gemStorage[col];
-    const below = column.slice(0, idx);
-    const above = column.slice(idx+1);
-    const belowLength = below.length; 
-    const aboveLength = above.length; 
-    const belowRemoved = this.removeBelow(below, color);
-    const aboveRemoved = this.removeAbove(above, color);
-    if (!(belowLength === belowRemoved.length && aboveLength === aboveRemoved.length)) {
-      this.gemStorage[col] = belowRemoved.concat(aboveRemoved);
-      this.gemStorage[col].forEach((gem,idx) => {
-        if (idx > 0) {
-          gem.updatePosY(this.gemStorage[col][idx-1].posY - 50);
-        }
-      });
+  checkLeftRight(color, colNum, idx) {
+    const leftColNum = colNum - 1;
+    const rightColNum = colNum + 1;
+    if (this.gemStorage[leftColNum] && this.gemStorage[leftColNum][idx] && this.gemStorage[leftColNum][idx].color === color) {
+      this.deleteArr[leftColNum].push(idx);
+    }
+    if (this.gemStorage[rightColNum] && this.gemStorage[rightColNum][idx] && this.gemStorage[rightColNum][idx].color === color) {
+      this.deleteArr[rightColNum].push(idx);
     }
   }
 
-  // checkRow(col, idx, color) {
-  //   let adjGem;
-  //   for (let i = col - 1; i > 0; i--) {
-  //     adjGem = this.gemStorage[col][idx];
-  //     if (adjGem && adjGem.color === color) {
-  //       this.checkCol(i, idx, color);
-  //     } else {
-  //       break;
-  //     }
-  //   }
-  //   for (let j = col + 1; j < 7; j++) {
-  //     adjGem = this.gemStorage[col][idx];
-  //     if (adjGem && adjGem.color === color) {
-  //       this.checkCol(j, idx, color);
-  //     } else {
-  //       break;
-  //     }
-  //   }
-  // }
+  removeBelow(arr, color, colNum) {
+    if (arr.length === 0) return null;
+    const gemIdx = arr.length - 1;
+    if (arr.slice(gemIdx)[0].color !== color) return null;
+    if (!this.deleteArr[colNum].includes(gemIdx)) {
+      this.deleteArr[colNum].push(gemIdx);
+    }
+    arr.pop();
+    this.score += 50;
+    this.removeBelow(arr, color);
+  }
+
+  removeAbove(arr, color, colNum, idx) {
+    if (arr.length === 0) return null;
+    if (arr[0].color !== color) return null;
+    const gemIdx = idx - 1;
+    if (!this.deleteArr[colNum].includes(gemIdx)) {
+      this.deleteArr[colNum].push(gemIdx + 1);
+    }    
+    arr.shift();
+    this.score += 50;
+    return this.removeAbove(arr, color, colNum, gemIdx);
+  }
+
+  checkCol(colNum, idx, color) {
+    let column = this.gemStorage[colNum];
+    const below = column.slice(0, idx);
+    const above = column.slice(idx+1);
+    this.removeBelow(below, color, colNum);
+    this.removeAbove(above, color, colNum, idx);
+  }
+
+  checkRow(colNum, idx, color) {
+    let adjGem;
+    for (let i = colNum - 1; i >= 0; i--) {
+      adjGem = this.gemStorage[i][idx];
+      if (adjGem && adjGem.color === color) {
+        this.checkCol(i, idx, color);
+      } else {
+        break;
+      }
+    }
+    for (let j = colNum + 1; j <= 5; j++) {
+      adjGem = this.gemStorage[0][idx];
+      if (adjGem && adjGem.color === color) {
+        this.checkCol(j, idx, color);
+      } else {
+        break;
+      }
+    }
+  }
 
   checkCrash() {
-    this.gemStorage.forEach(col => {
+    this.gemStorage.forEach((col, colNum) => {
       col.forEach((gem,idx) => {
         if (gem.type === "crash") {
-          this.checkCol(col, idx, gem.color);
-          this.checkRow(col, idx, gem.color);
+          this.checkCol(colNum, idx, gem.color);
+          this.checkRow(colNum, idx, gem.color);
         }
       });
     });
@@ -341,13 +349,13 @@ class Game {
 
       this.storeCurrentGem();
       this.moveStagingToLive();
-      // this.checkCrash();
+      this.checkCrash();
 
       if (this.colHeight(3) >= -50) {
         this.score += 10;
         this.renderCycle();
       } else {
-        this.gameinProgress = false;
+        debugger;
 
         this.ctx.fillStyle = "black";
         this.ctx.globalAlpha = 0.5;
