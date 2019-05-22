@@ -1,5 +1,6 @@
 const GemPrimary = require('./gemPrimary');
 const GemSecondary = require('./gemSecondary');
+const GemNull = require('./gemNull');
 
 class Game {
   constructor(ctx, ctxScoreboard, ctxNextGem) {
@@ -8,22 +9,22 @@ class Game {
     this.ctxNextGem = ctxNextGem;
     this.gemPrimaryLive = undefined;
     this.gemSecondaryLive = undefined;
-    this.gemPrimaryStaging = new GemPrimary({ ctx: this.ctxNextGem, gem: this.randomGemImages() });
-    this.gemSecondaryStaging = new GemSecondary({ ctx: this.ctxNextGem, gem: this.randomGemImages() });
-    this.gemNull = new GemPrimary({ ctx: this.ctx, gem: { type: "cat", color: "gray", imgSrc: "./assets/images/cat.png" }});
-    this.gemNull.updatePosY(650);
+    this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem);
+    this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem);
+    this.gemNull = new GemNull(this.ctx);
     this.gemsFalling = false;
-    this.gemStorage = {
-      col1: [this.gemNull],
-      col2: [this.gemNull],
-      col3: [this.gemNull],
-      col4: [this.gemNull],
-      col5: [this.gemNull],
-      col6: [this.gemNull],
-    };
+    this.gemStorage = [
+      [this.gemNull],
+      [this.gemNull],
+      [this.gemNull],
+      [this.gemNull],
+      [this.gemNull],
+      [this.gemNull],
+    ];
     this.score = 0;
     this.renderCycle = this.renderCycle.bind(this);
     this.gameinProgress = false;
+    this.deleteArr = [[],[],[],[],[],[]];
   }
 
   startMenu() {
@@ -73,57 +74,34 @@ class Game {
     }
   }
 
-  randomGemImages() {
-    const gemImages = [
-      // { color: "blue", imgSrc: "./assets/images/cat.png" },
-      // { color: "red", imgSrc: "./assets/images/cat.png" },
-      // { color: "green", imgSrc: "./assets/images/cat.png" },
-      // { color: "yellow", imgSrc: "./assets/images/cat.png" }
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
-      { type: "gem", color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
-      { type: "gem", color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
-      { type: "gem", color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
-      { type: "gem", color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
-      { type: "crash", color: "blue", imgSrc: "./assets/images/SPF2T_Crash_Blue.png" },
-      { type: "crash", color: "red", imgSrc: "./assets/images/SPF2T_Crash_Red.png" },
-      { type: "crash", color: "green", imgSrc: "./assets/images/SPF2T_Crash_Green.png" },
-      { type: "crash", color: "yellow", imgSrc: "./assets/images/SPF2T_Crash_Yellow.png" }
-    ];
-    return gemImages[Math.floor(Math.random() * gemImages.length)];
-  }
-
   storeCurrentGem(){
     const gems = this.gemPrimaryLive.posRel === 2 ? [this.gemPrimaryLive, this.gemSecondaryLive] : [this.gemSecondaryLive, this.gemPrimaryLive];
 
     gems.forEach(gem => {
       switch(gem.posX) {
         case 0:
-          this.gemStorage.col1.push(gem);
+          this.gemStorage[0].push(gem);
           break;
         case 50:
-          this.gemStorage.col2.push(gem);
+          this.gemStorage[1].push(gem);
           break;
         case 100:
-          this.gemStorage.col3.push(gem);
+          this.gemStorage[2].push(gem);
           break;
         case 150:
-          this.gemStorage.col4.push(gem);
+          this.gemStorage[3].push(gem);
           break;
         case 200:
-          this.gemStorage.col5.push(gem);
+          this.gemStorage[4].push(gem);
           break;
         case 250:
-          this.gemStorage.col6.push(gem);
+          this.gemStorage[5].push(gem);
           break;
       }
     });
   }
 
-  colHeight(colNum) {
-    const col = `col${colNum}`;
+  colHeight(col) {
     if (this.gemStorage[col]) {
       if (this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0]) {
         return this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0].posY - 50;
@@ -193,24 +171,23 @@ class Game {
   }
 
 
-  removeBelow(arr, color) {
-    if (arr.length === 0) return arr;
-    if (arr.slice(arr.length-1)[0].color !== color) return arr;
-    arr.pop();
-    this.score += 50;
-    return this.removeBelow(arr, color);
-  }
+  // removeBelow(arr, color) {
+  //   if (arr.length === 0) return arr;
+  //   if (arr.slice(arr.length-1)[0].color !== color) return arr;
+  //   arr.pop();
+  //   this.score += 50;
+  //   return this.removeBelow(arr, color);
+  // }
 
-  removeAbove(arr, color) {
-    if (arr.length === 0) return arr;
-    if (arr[0].color !== color) return arr;
-    arr.shift();
-    this.score += 50;
-    return this.removeAbove(arr, color);
-  }
+  // removeAbove(arr, color) {
+  //   if (arr.length === 0) return arr;
+  //   if (arr[0].color !== color) return arr;
+  //   arr.shift();
+  //   this.score += 50;
+  //   return this.removeAbove(arr, color);
+  // }
 
-  checkCol(colNum, idx, color) {
-    const col = `col${colNum}`;
+  checkCol(col, idx, color) {
     let column = this.gemStorage[col];
     const below = column.slice(0, idx);
     const above = column.slice(idx+1);
@@ -228,35 +205,35 @@ class Game {
     }
   }
 
-  checkRow(colNum, idx, color) {
-    let adjGem;
-    for (let i = colNum - 1; i > 0; i--) {
-      adjGem = this.gemStorage[`col${i}`][idx];
-      if (adjGem && adjGem.color === color) {
-        this.checkCol(i, idx, color);
-      } else {
-        break;
-      }
-    }
-    for (let j = colNum + 1; j < 7; j++) {
-      adjGem = this.gemStorage[`col${j}`][idx];
-      if (adjGem && adjGem.color === color) {
-        this.checkCol(j, idx, color);
-      } else {
-        break;
-      }
-    }
-  }
+  // checkRow(col, idx, color) {
+  //   let adjGem;
+  //   for (let i = col - 1; i > 0; i--) {
+  //     adjGem = this.gemStorage[col][idx];
+  //     if (adjGem && adjGem.color === color) {
+  //       this.checkCol(i, idx, color);
+  //     } else {
+  //       break;
+  //     }
+  //   }
+  //   for (let j = col + 1; j < 7; j++) {
+  //     adjGem = this.gemStorage[col][idx];
+  //     if (adjGem && adjGem.color === color) {
+  //       this.checkCol(j, idx, color);
+  //     } else {
+  //       break;
+  //     }
+  //   }
+  // }
 
   checkCrash() {
-    for (let i = 1; i <= 6; i++) {
-      this.gemStorage[`col${i}`].forEach((gem,idx) => {
+    this.gemStorage.forEach(col => {
+      col.forEach((gem,idx) => {
         if (gem.type === "crash") {
-          this.checkCol(i, idx, gem.color);
-          this.checkRow(i, idx, gem.color);
+          this.checkCol(col, idx, gem.color);
+          this.checkRow(col, idx, gem.color);
         }
       });
-    }
+    });
   }
 
   handleKeyEvent() {
@@ -305,10 +282,10 @@ class Game {
   moveStagingToLive() {
     this.gemPrimaryStaging.goLive(this.ctx);
     this.gemPrimaryLive = this.gemPrimaryStaging;
-    this.gemPrimaryStaging = new GemPrimary({ ctx: this.ctxNextGem, gem: this.randomGemImages() });
+    this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem);
     this.gemSecondaryStaging.goLive(this.ctx);
     this.gemSecondaryLive = this.gemSecondaryStaging;
-    this.gemSecondaryStaging = new GemSecondary({ ctx: this.ctxNextGem, gem: this.randomGemImages() });
+    this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem);
   }
 
   renderStaging() {
@@ -333,11 +310,11 @@ class Game {
   }
 
   renderGemStorage() {
-    for (let i = 1; i <= 6; i++) {
-      this.gemStorage[`col${i}`].forEach(gem => {
+    this.gemStorage.forEach(col => {
+      col.forEach(gem => {
         gem.render();
       });
-    }
+    });
   }
 
   updateScore() {
@@ -364,9 +341,9 @@ class Game {
 
       this.storeCurrentGem();
       this.moveStagingToLive();
-      this.checkCrash();
+      // this.checkCrash();
 
-      if (this.colHeight(4) >= -50) {
+      if (this.colHeight(3) >= -50) {
         this.score += 10;
         this.renderCycle();
       } else {
