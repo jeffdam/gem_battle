@@ -22,7 +22,6 @@ class Game {
     ];
     this.score = 0;
     this.renderCycle = this.renderCycle.bind(this);
-    this.updateGem = this.updateGem.bind(this);
     this.deleteArr = [[],[],[],[],[],[]];
   }
 
@@ -31,29 +30,34 @@ class Game {
     this.ctxNextGem.fillStyle = "black";
     this.ctxScoreboard.fillRect(0,0,300, 650);
     this.ctxScoreboard.fillStyle = "black";
-
+    
     this.ctx.fillRect(0,0,300, 650);
     this.ctx.fillStyle = "black";
     this.ctx.textAlign = "center";
     this.ctx.fillStyle = "white";
-    this.ctx.font = "24px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif, Arial";
-    this.ctx.fillText("Welcome to Gem Battle!", 150, 40, 280);
+    this.ctx.font = "24px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
+    const linePosYStart = 125;
+    const subLines = (lineNum) => (linePosYStart + (lineNum * 30));
+    this.ctx.fillText("Welcome to", 150, 40, 280);
+    this.ctx.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
+    this.ctx.fillText("Gem Battle!", 150, 75, 280);
+
     this.ctx.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
     
-    this.ctx.fillText("Clear as many gems as you can!", 150, 100, 280);
-    this.ctx.fillText("Use left arrow to move left.", 150, 130, 280);
-    this.ctx.fillText("Use right arrow to move right.", 150, 160, 280);
-    this.ctx.fillText("Use 'z' to rotate clockwise.", 150, 190, 280);
-    this.ctx.fillText("Use 'x' to rotate counter-clockwise.", 150, 220, 280);
-    
-    this.ctx.fillText("Place similar colored gems next", 150, 280, 280);
-    this.ctx.fillText("to each other. Use the round gems", 150, 310, 280);
-    this.ctx.fillText("to clear the same colored gems.", 150, 340, 280);
-    this.ctx.fillText("The game is over when the drop", 150, 370, 280);
-    this.ctx.fillText("alley is blocked.", 150, 400, 280);
+    this.ctx.fillText("Clear as many gems as you can!", 150, subLines(0), 280);
+    this.ctx.fillText("Use left arrow to move left.", 150, subLines(1), 280);
+    this.ctx.fillText("Use right arrow to move right.", 150, subLines(2), 280);
+    this.ctx.fillText("Use 'z' to rotate clockwise.", 150, subLines(3), 280);
+    this.ctx.fillText("Use 'x' to rotate counter-clockwise.", 150, subLines(4), 280);
+
+    this.ctx.fillText("Place similar colored gems next", 150, subLines(6), 280);
+    this.ctx.fillText("to each other. Use the round gems", 150, subLines(7), 280);
+    this.ctx.fillText("to clear the same colored gems.", 150, subLines(8), 280);
+    this.ctx.fillText("The game is over when the drop", 150, subLines(9), 280);
+    this.ctx.fillText("alley is blocked.", 150, subLines(10), 280);
     
     this.ctx.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-    this.ctx.fillText("Press Enter to Start", 150, 460, 280);
+    this.ctx.fillText("Press Enter to Start", 150, subLines(12), 280);
     
     const handleEnter = (event) => {
       if (event.defaultPrevented) {
@@ -168,9 +172,10 @@ class Game {
 
   checkLeftRight(color, colNum, idx) {
     const adjColNums = [colNum - 1, colNum + 1];
-    adjColNums.forEach(colNum => {
-      if (this.gemStorage[colNum] && this.gemStorage[colNum][idx] && this.gemStorage[colNum][idx].color === color && !this.deleteArr[colNum].includes(idx)) {
-        this.deleteArr[colNum].push(idx);
+    adjColNums.forEach(adjColNum => {
+      if (this.gemStorage[adjColNum] && this.gemStorage[adjColNum][idx] && this.gemStorage[adjColNum][idx].color === color && !this.deleteArr[adjColNum].includes(idx)) {
+        this.deleteArr[adjColNum].push(idx);
+        
       }
     });
   }
@@ -265,27 +270,37 @@ class Game {
     });
   }
 
-  updateGem(gem, colHeight){
-    let id = requestAnimationFrame((gem, colHeight) => this.updateGem(gem, colHeight));
-    gem.drop(colHeight, 10);
-    if (gem.vel === 0) {
-      cancelAnimationFrame(id);
-    }
-  }
+  // updateGem(gem, colHeight){
+  //   let id = requestAnimationFrame(() => {
+  //     const gemSave = gem;
+  //     const colHeightSave = colHeight;
+  //     this.updateGem(gemSave, colHeightSave);
+  //   });
+  //   gem.drop(colHeight, 10);
+  //   if (gem.vel === 0) {
+  //     cancelAnimationFrame(id);
+  //   }
+  // }
 
   handleCrashGems() {
+    let clearedAllValidCrashGems = true;
     this.checkCrashGems();
     for (let colNum = 0; colNum < 6; colNum++) {
+      if (this.deleteArr[colNum].length > 0) { clearedAllValidCrashGems = false;}
       this.gemStorage[colNum] = this.gemStorage[colNum].filter((gem, gemIdx) => !this.deleteArr[colNum].includes(gemIdx));
     }
     this.deleteArr = [[], [], [], [], [], []];
-    this.gemStorage.forEach((col, colNum) => {
+    this.gemStorage.forEach((col) => {
       col.forEach((gem, idx) => {
         if (idx > 0 && gem.posY < col[idx - 1].posY - 50) {
-          this.updateGem(gem, col[idx-1].posY-50);
+          gem.updatePosY(col[idx - 1].posY - 50);
+          // this.updateGem(gem, col[idx-1].posY-50);
         }
       });
     });
+    if (!clearedAllValidCrashGems) {
+      this.handleCrashGems();
+    }
   }
 
 
