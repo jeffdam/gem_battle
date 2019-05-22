@@ -1,16 +1,35 @@
 class GemPrimary {
-  constructor({ ctx, gem }) {
+  constructor(ctx) {
+    const gemImages = [
+      // { color: "blue", imgSrc: "./assets/images/cat.png" },
+      // { color: "red", imgSrc: "./assets/images/cat.png" },
+      // { color: "green", imgSrc: "./assets/images/cat.png" },
+      // { color: "yellow", imgSrc: "./assets/images/cat.png" }
+      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
+      { type: "gem", color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
+      { type: "gem", color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
+      { type: "gem", color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
+      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
+      { type: "gem", color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
+      { type: "gem", color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
+      { type: "gem", color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
+      { type: "crash", color: "blue", imgSrc: "./assets/images/SPF2T_Crash_Blue.png" },
+      { type: "crash", color: "red", imgSrc: "./assets/images/SPF2T_Crash_Red.png" },
+      { type: "crash", color: "green", imgSrc: "./assets/images/SPF2T_Crash_Green.png" },
+      { type: "crash", color: "yellow", imgSrc: "./assets/images/SPF2T_Crash_Yellow.png" }
+    ];
+    this.gem = gemImages[Math.floor(Math.random() * gemImages.length)];
     this.ctx = ctx;
     this.posX = 10;
     this.posY = 60;
-    this.color = gem.color;
-    this.type = gem.type;
+    this.color = this.gem.color;
+    this.type = this.gem.type;
     const img = new Image();
-    img.src = gem.imgSrc;
+    img.src = this.gem.imgSrc;
     this.img = img;
     this.widthHeight = 50;
     this.vel = 5;
-    this.col = 4;
+    this.col = 3;
     this.posRel = 2;
     this.otherVel = 5;
   }
