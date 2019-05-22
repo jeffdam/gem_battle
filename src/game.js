@@ -171,74 +171,99 @@ class Game {
   }
 
   checkLeftRight(color, colNum, idx) {
-    const leftColNum = colNum - 1;
-    const rightColNum = colNum + 1;
-    if (this.gemStorage[leftColNum] && this.gemStorage[leftColNum][idx] && this.gemStorage[leftColNum][idx].color === color) {
-      this.deleteArr[leftColNum].push(idx);
-    }
-    if (this.gemStorage[rightColNum] && this.gemStorage[rightColNum][idx] && this.gemStorage[rightColNum][idx].color === color) {
-      this.deleteArr[rightColNum].push(idx);
-    }
+    const adjColNums = [colNum - 1, colNum + 1];
+    adjColNums.forEach(colNum => {
+      if (this.gemStorage[colNum] && this.gemStorage[colNum][idx] && this.gemStorage[colNum][idx].color === color && !this.deleteArr[colNum].includes(idx)) {
+        this.deleteArr[colNum].push(idx);
+      }
+    });
   }
-
+  
   removeBelow(arr, color, colNum) {
-    if (arr.length === 0) return null;
-    const gemIdx = arr.length - 1;
-    if (arr.slice(gemIdx)[0].color !== color) return null;
-    if (!this.deleteArr[colNum].includes(gemIdx)) {
-      this.deleteArr[colNum].push(gemIdx);
-    }
-    arr.pop();
-    this.score += 50;
-    this.removeBelow(arr, color);
+    let hasAdj = false;
+    for (let i = arr.length-1; i > 0; i--) {
+      if (arr[i].color === color && !this.deleteArr[colNum].includes(i)) {
+        hasAdj = true;
+        this.deleteArr[colNum].push(i);
+        this.checkLeftRight(color, colNum, i);
+        this.score += 50;
+      } else {
+        break;
+      }
+    } 
+    return hasAdj;
   }
 
   removeAbove(arr, color, colNum, idx) {
-    if (arr.length === 0) return null;
-    if (arr[0].color !== color) return null;
-    const gemIdx = idx - 1;
-    if (!this.deleteArr[colNum].includes(gemIdx)) {
-      this.deleteArr[colNum].push(gemIdx + 1);
-    }    
-    arr.shift();
-    this.score += 50;
-    return this.removeAbove(arr, color, colNum, gemIdx);
+    let hasAdj = false;
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].color === color && !this.deleteArr[colNum].includes(i + idx + 1)) {
+        hasAdj = true;
+        this.deleteArr[colNum].push(i + idx + 1);
+        this.checkLeftRight(color, colNum, i + idx + 1);
+        this.score += 50;
+      } else {
+        break;
+      }
+    }
+    return hasAdj;
   }
 
   checkCol(colNum, idx, color) {
     let column = this.gemStorage[colNum];
     const below = column.slice(0, idx);
     const above = column.slice(idx+1);
-    this.removeBelow(below, color, colNum);
-    this.removeAbove(above, color, colNum, idx);
+    const belowHasAdj = this.removeBelow(below, color, colNum);
+    const aboveHasAdj =  this.removeAbove(above, color, colNum, idx);
+    return (belowHasAdj || aboveHasAdj);
   }
 
   checkRow(colNum, idx, color) {
     let adjGem;
+    let hasAdj = false;
     for (let i = colNum - 1; i >= 0; i--) {
       adjGem = this.gemStorage[i][idx];
       if (adjGem && adjGem.color === color) {
+        hasAdj = true;
+        if (!this.deleteArr[i].includes(idx)) {
+          this.deleteArr[i].push(idx);
+          this.checkLeftRight(color, colNum, idx);
+          this.score += 50;
+        }
         this.checkCol(i, idx, color);
       } else {
         break;
       }
     }
     for (let j = colNum + 1; j <= 5; j++) {
-      adjGem = this.gemStorage[0][idx];
+      adjGem = this.gemStorage[j][idx];
       if (adjGem && adjGem.color === color) {
+        hasAdj = true;
+        if (!this.deleteArr[j].includes(idx)) {
+          this.deleteArr[j].push(idx);
+          this.checkLeftRight(color, colNum, idx);
+          this.score += 50;
+        }
         this.checkCol(j, idx, color);
       } else {
         break;
       }
     }
+    return hasAdj;
   }
 
   checkCrash() {
     this.gemStorage.forEach((col, colNum) => {
       col.forEach((gem,idx) => {
         if (gem.type === "crash") {
-          this.checkCol(colNum, idx, gem.color);
-          this.checkRow(colNum, idx, gem.color);
+          const colHasAdj = this.checkCol(colNum, idx, gem.color);
+          const rowHasAdj = this.checkRow(colNum, idx, gem.color);
+          if (colHasAdj || rowHasAdj) {
+            if (!this.deleteArr[colNum].includes(idx)) {
+              this.deleteArr[colNum].push(idx);
+              this.score += 50;
+            }
+          }
         }
       });
     });
