@@ -1,4 +1,4 @@
-const GemPrimary = require('./gemPrimary');
+import GemPrimary from './gemPrimary';
 
 class GemSecondary extends GemPrimary {
   constructor(ctx, vel) {
@@ -36,4 +36,4 @@ class GemSecondary extends GemPrimary {
 
 }
 
-module.exports = GemSecondary;
+export default GemSecondary;

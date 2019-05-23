@@ -1,4 +1,4 @@
-const Game = require('./game');
+import Game from './game';
 
 document.addEventListener('DOMContentLoaded', () => {
   const canvasPF1 = document.getElementById("play-field-1");
@@ -18,5 +18,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const game = new Game(ctxPF1, ctxScoreboard, ctxnextGem);
     
-  game.startMenu();
+  game.gameRender();
 });

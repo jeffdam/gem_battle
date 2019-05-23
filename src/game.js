@@ -1,6 +1,7 @@
-const GemPrimary = require('./gemPrimary');
-const GemSecondary = require('./gemSecondary');
-const GemNull = require('./gemNull');
+import GemPrimary from './gemPrimary';
+import GemSecondary from './gemSecondary';
+import GemNull from './gemNull';
+import { startGameMenu, endGameMenu } from "./menus";
 
 class Game {
   constructor(ctx, ctxScoreboard, ctxNextGem) {
@@ -26,60 +27,7 @@ class Game {
     this.deleteArr = [[],[],[],[],[],[]];
     this.score = 0;
     this.renderCycle = this.renderCycle.bind(this);
-  }
-
-  startMenu() {
-    this.ctxNextGem.fillRect(0,0,300, 650);
-    this.ctxNextGem.fillStyle = "black";
-    this.ctxScoreboard.fillRect(0,0,300, 650);
-    this.ctxScoreboard.fillStyle = "black";
-    
-    this.ctx.fillRect(0,0,300, 650);
-    this.ctx.fillStyle = "black";
-    this.ctx.textAlign = "center";
-    this.ctx.fillStyle = "white";
-    const linePosYStart = 125;
-    const subLines = (lineNum) => (linePosYStart + (lineNum * 30));
-
-    this.ctx.font = "24px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-    this.ctx.fillText("Welcome to", 150, 40, 280);
-    this.ctx.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-    this.ctx.fillText("Gem Battle!", 150, 75, 280);
-
-    this.ctx.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-    this.ctx.fillText("Clear as many gems as you can!", 150, subLines(0), 280);
-    this.ctx.fillText("Use left arrow to move left.", 150, subLines(1), 280);
-    this.ctx.fillText("Use right arrow to move right.", 150, subLines(2), 280);
-    this.ctx.fillText("Use down arrow to hard drop.", 150, subLines(3), 280);
-    this.ctx.fillText("Use 'z' to rotate clockwise.", 150, subLines(4), 280);
-    this.ctx.fillText("Use 'x' to rotate counter-clockwise.", 150, subLines(5), 280);
-    
-    this.ctx.fillText("Place similar colored gems next", 150, subLines(7), 280);
-    this.ctx.fillText("to each other. Use the round gems", 150, subLines(8), 280);
-    this.ctx.fillText("to clear the same colored gems.", 150, subLines(9), 280);
-    this.ctx.fillText("The game is over when the drop", 150, subLines(10), 280);
-    this.ctx.fillText("alley is blocked.", 150, subLines(11), 280);
-    
-    this.ctx.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-    this.ctx.fillText("Press Enter to Start", 150, subLines(13), 280);
-    
-    const handleEnter = (event) => {
-      if (event.defaultPrevented) {
-        return;
-      }
-      switch (event.key) {
-        case "Enter":
-          this.gameStart();
-          break;
-        default:
-          return;
-      }
-      event.preventDefault();
-      window.removeEventListener("keydown", handleEnter, true);
-    };
-
-    window.addEventListener("keydown", handleEnter , true);
-
+    this.gameStart = this.gameStart.bind(this);
   }
 
   storeCurrentGem(){
@@ -137,7 +85,9 @@ class Game {
     switch (this.gemSecondaryLive.posRel) {
       case 0:
         adjColHeight = this.colHeight(this.gemSecondaryLive.col + 1) - 50;
-        if (this.gemSecondaryLive.posY < adjColHeight) { this.rotate('cw'); }
+        if (this.gemSecondaryLive.posY < adjColHeight) { 
+          this.rotate('cw'); 
+        }
         break;
       case 1:
         adjColHeight = this.colHeight(this.gemSecondaryLive.col - 1) - 50;
@@ -173,16 +123,6 @@ class Game {
         break;
     }
   }
-
-  checkLeftRight(color, colNum, idx) {
-    const adjColNums = [colNum - 1, colNum + 1];
-    adjColNums.forEach(adjColNum => {
-      if (this.gemStorage[adjColNum] && this.gemStorage[adjColNum][idx] && this.gemStorage[adjColNum][idx].color === color && !this.deleteArr[adjColNum].includes(idx)) {
-        this.deleteArr[adjColNum].push(idx);
-        
-      }
-    });
-  }
   
   removeBelow(arr, color, colNum) {
     let hasAdj = false;
@@ -191,7 +131,6 @@ class Game {
         hasAdj = true;
         this.deleteArr[colNum].push(i);
         this.checkRow(colNum, i, color);
-        // this.checkLeftRight(color, colNum, i);
         this.score += 50;
       } else {
         break;
@@ -206,7 +145,6 @@ class Game {
       if (arr[i].color === color && !this.deleteArr[colNum].includes(i + idx + 1)) {
         hasAdj = true;
         this.deleteArr[colNum].push(i + idx + 1);
-        // this.checkLeftRight(color, colNum, i + idx + 1);
         this.checkRow(colNum, i + idx + 1, color);
 
         this.score += 50;
@@ -235,7 +173,6 @@ class Game {
         hasAdj = true;
         if (!this.deleteArr[i].includes(idx)) {
           this.deleteArr[i].push(idx);
-          this.checkLeftRight(color, colNum, idx);
           this.score += 50;
         }
         this.checkCol(i, idx, color);
@@ -249,7 +186,6 @@ class Game {
         hasAdj = true;
         if (!this.deleteArr[j].includes(idx)) {
           this.deleteArr[j].push(idx);
-          this.checkLeftRight(color, colNum, idx);
           this.score += 50;
         }
         this.checkCol(j, idx, color);
@@ -451,41 +387,15 @@ class Game {
         this.handleDownArrowKeyEvent();
         this.renderCycle();
       } else {
-        this.ctx.fillStyle = "black";
-        this.ctx.globalAlpha = 0.5;
-        this.ctx.fillRect(0, 0, 300, 650);
-        this.ctx.globalAlpha = 1;
-        this.ctx.fillRect(0, 275, 300, 150);
-        this.ctx.fillStyle = "red";
-        // this.ctx.font = "40px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-        this.ctx.font = "40px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-        this.ctx.textAlign = "center"; 
-        this.ctx.fillText("GAME OVER", 150, 330);
-        this.ctx.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-        this.ctx.textAlign = "center"; 
-        this.ctx.fillText(`Your score: ${this.score}`, 150, 365);
-        this.ctx.fillText(`Press Enter to play again.`, 150, 395);
-
-        const handleEnter = (event) => {
-          if (event.defaultPrevented) {
-            return;
-          }
-          switch (event.key) {
-            case "Enter":
-              this.gameStart();
-              break;
-            default:
-              return;
-          }
-          event.preventDefault();
-          window.removeEventListener("keydown", handleEnter, true);
-        };
-
-        window.addEventListener("keydown", handleEnter, true);
+        endGameMenu(this.ctx, this.score, this.gameStart);
       }
     }
   }
   
+  gameRender() {
+    startGameMenu(this.ctx, this.ctxNextGem, this.ctxScoreboard, this.gameStart);
+  }
+
   gameStart() {
     if (this.gemPrimaryLive) this.reset();
     this.handleDownArrowKeyEvent();
@@ -513,5 +423,4 @@ class Game {
  
 }
 
-module.exports = Game;
-
+export default Game;
