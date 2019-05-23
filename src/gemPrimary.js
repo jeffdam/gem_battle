@@ -55,7 +55,7 @@ class GemPrimary {
   }
 
   hardDrop(colHeight) {
-    this.posY = this.posRel === 0 ? colHeight - 75 : colHeight - 25;
+    this.posY = this.posRel === 0 ? colHeight - 65 : colHeight - 15;
   }
 
   goLive(ctx) {
