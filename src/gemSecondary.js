@@ -1,8 +1,8 @@
 const GemPrimary = require('./gemPrimary');
 
 class GemSecondary extends GemPrimary {
-  constructor(ctx) {
-    super(ctx);
+  constructor(ctx, vel) {
+    super(ctx, vel);
     this.posY = 10;
     this.posRel = 0;
   }

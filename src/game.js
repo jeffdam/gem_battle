@@ -7,10 +7,13 @@ class Game {
     this.ctx = ctx;
     this.ctxScoreboard = ctxScoreboard;
     this.ctxNextGem = ctxNextGem;
+
+    this.gemCount = 1;
+    this.gemVel = 1;
     this.gemPrimaryLive = undefined;
     this.gemSecondaryLive = undefined;
-    this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem);
-    this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem);
+    this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem, this.gemVel);
+    this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem, this.gemVel);
     this.gemNull = new GemNull(this.ctx);
     this.gemStorage = [
       [this.gemNull],
@@ -20,10 +23,9 @@ class Game {
       [this.gemNull],
       [this.gemNull],
     ];
-    this.score = 0;
-    this.gemCount = 1;
-    this.renderCycle = this.renderCycle.bind(this);
     this.deleteArr = [[],[],[],[],[],[]];
+    this.score = 0;
+    this.renderCycle = this.renderCycle.bind(this);
   }
 
   startMenu() {
@@ -36,29 +38,30 @@ class Game {
     this.ctx.fillStyle = "black";
     this.ctx.textAlign = "center";
     this.ctx.fillStyle = "white";
-    this.ctx.font = "24px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
     const linePosYStart = 125;
     const subLines = (lineNum) => (linePosYStart + (lineNum * 30));
+
+    this.ctx.font = "24px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
     this.ctx.fillText("Welcome to", 150, 40, 280);
     this.ctx.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
     this.ctx.fillText("Gem Battle!", 150, 75, 280);
 
     this.ctx.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-    
     this.ctx.fillText("Clear as many gems as you can!", 150, subLines(0), 280);
     this.ctx.fillText("Use left arrow to move left.", 150, subLines(1), 280);
     this.ctx.fillText("Use right arrow to move right.", 150, subLines(2), 280);
-    this.ctx.fillText("Use 'z' to rotate clockwise.", 150, subLines(3), 280);
-    this.ctx.fillText("Use 'x' to rotate counter-clockwise.", 150, subLines(4), 280);
-
-    this.ctx.fillText("Place similar colored gems next", 150, subLines(6), 280);
-    this.ctx.fillText("to each other. Use the round gems", 150, subLines(7), 280);
-    this.ctx.fillText("to clear the same colored gems.", 150, subLines(8), 280);
-    this.ctx.fillText("The game is over when the drop", 150, subLines(9), 280);
-    this.ctx.fillText("alley is blocked.", 150, subLines(10), 280);
+    this.ctx.fillText("Use down arrow to hard drop.", 150, subLines(3), 280);
+    this.ctx.fillText("Use 'z' to rotate clockwise.", 150, subLines(4), 280);
+    this.ctx.fillText("Use 'x' to rotate counter-clockwise.", 150, subLines(5), 280);
+    
+    this.ctx.fillText("Place similar colored gems next", 150, subLines(7), 280);
+    this.ctx.fillText("to each other. Use the round gems", 150, subLines(8), 280);
+    this.ctx.fillText("to clear the same colored gems.", 150, subLines(9), 280);
+    this.ctx.fillText("The game is over when the drop", 150, subLines(10), 280);
+    this.ctx.fillText("alley is blocked.", 150, subLines(11), 280);
     
     this.ctx.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-    this.ctx.fillText("Press Enter to Start", 150, subLines(12), 280);
+    this.ctx.fillText("Press Enter to Start", 150, subLines(13), 280);
     
     const handleEnter = (event) => {
       if (event.defaultPrevented) {
@@ -305,8 +308,6 @@ class Game {
     if (!clearedAllValidCrashGems) {
       this.handleCrashGems();
     } 
-
-
   }
 
 
@@ -340,11 +341,6 @@ class Game {
             this.moveHorizontal('right');
           } 
           break;
-        case "Down": // IE/Edge specific value
-        case "ArrowDown":
-          this.gemPrimaryLive.hardDrop(this.colHeight(this.gemPrimaryLive.col));
-          this.gemSecondaryLive.hardDrop(this.colHeight(this.gemSecondaryLive.col));
-          break;
         case "z": // Rotate Clockwise
           this.rotateCW(); 
           break;
@@ -358,13 +354,35 @@ class Game {
     }, true);
   }
 
+  handleDownArrowKeyEvent() {
+    const handleDownArrow = (event) => {
+      if (event.defaultPrevented) {
+        return;
+      }
+      switch (event.key) {
+        case "Down": // IE/Edge specific value
+        case "ArrowDown":
+          this.gemPrimaryLive.hardDrop(this.colHeight(this.gemPrimaryLive.col));
+          this.gemSecondaryLive.hardDrop(this.colHeight(this.gemSecondaryLive.col));
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
+      window.removeEventListener("keydown", handleDownArrow, true);
+    };
+
+    window.addEventListener("keydown", handleDownArrow, true);
+
+  }
+
   moveStagingToLive() {
     this.gemPrimaryStaging.goLive(this.ctx);
     this.gemPrimaryLive = this.gemPrimaryStaging;
-    this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem);
+    this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem, this.gemVel);
     this.gemSecondaryStaging.goLive(this.ctx);
     this.gemSecondaryLive = this.gemSecondaryStaging;
-    this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem);
+    this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem, this.gemVel);
   }
 
   renderStaging() {
@@ -423,8 +441,14 @@ class Game {
       
       this.handleCrashGems();
 
+      if (this.gemCount % 15 === 0) {
+        this.gemVel++;
+      }
+
       if (this.colHeight(3) >= -50) {
         this.score += 10;
+        this.gemCount++;
+        this.handleDownArrowKeyEvent();
         this.renderCycle();
       } else {
         this.ctx.fillStyle = "black";
@@ -464,10 +488,13 @@ class Game {
   
   gameStart() {
     if (this.gemPrimaryLive) this.reset();
+    this.handleDownArrowKeyEvent();
     this.renderCycle();
   }
 
   reset() {
+    this.gemVel = 1;
+    this.gemCount = 0;
     this.gemPrimaryLive = undefined;
     this.gemSecondaryLive = undefined;
     this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem);
