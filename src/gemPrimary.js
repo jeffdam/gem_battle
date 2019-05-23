@@ -5,21 +5,15 @@ class GemPrimary {
       // { color: "red", imgSrc: "./assets/images/cat.png" },
       // { color: "green", imgSrc: "./assets/images/cat.png" },
       // { color: "yellow", imgSrc: "./assets/images/cat.png" }
+
       { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
+      { type: "gem", color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
+      { type: "gem", color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
+      { type: "gem", color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
       { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
-      { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
+      { type: "gem", color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
+      { type: "gem", color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
+      { type: "gem", color: "yellow", imgSrc: "./assets/images/SPF2T_Gem_Yellow.png" },
       { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
       { type: "gem", color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
       { type: "gem", color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
@@ -51,12 +45,17 @@ class GemPrimary {
 
   handleCollision(colHeight) {
     if ((this.posRel === 0 && this.posY >= colHeight - 50) || (this.posRel !== 0 && this.posY >= colHeight)) {
+      this.posY = this.posRel === 0 ? colHeight - 50 : colHeight;
       this.vel = 0;
     }
   }
 
   updatePosY(newPosY) {
     this.posY = newPosY;
+  }
+
+  hardDrop(colHeight) {
+    this.posY = this.posRel === 0 ? colHeight - 100 : colHeight - 50;
   }
 
   goLive(ctx) {
