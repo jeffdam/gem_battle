@@ -21,6 +21,7 @@ class Game {
       [this.gemNull],
     ];
     this.score = 0;
+    this.gemCount = 1;
     this.renderCycle = this.renderCycle.bind(this);
     this.deleteArr = [[],[],[],[],[],[]];
   }
@@ -338,6 +339,11 @@ class Game {
           } else if (this.gemPrimaryLive.posRel !== 3 && this.gemSecondaryLive.posRel !== 3){
             this.moveHorizontal('right');
           } 
+          break;
+        case "Down": // IE/Edge specific value
+        case "ArrowDown":
+          this.gemPrimaryLive.hardDrop(this.colHeight(this.gemPrimaryLive.col));
+          this.gemSecondaryLive.hardDrop(this.colHeight(this.gemSecondaryLive.col));
           break;
         case "z": // Rotate Clockwise
           this.rotateCW(); 
