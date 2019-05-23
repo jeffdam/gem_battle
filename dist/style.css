@@ -6,6 +6,7 @@
 
 main {
   width: 100%;
+  min-width: 600px;
   height: 100%;
 }
 
@@ -48,5 +49,17 @@ h1 {
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+
+#GitHubLink{
+  position: absolute;
+  right: 50px;
+  top: 50px;
+  background: white;
+  border-radius: 100%;
+}
+
+#GitHubLink img {
+  width: 75px;
 }
 

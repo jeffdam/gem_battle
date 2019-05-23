@@ -5,7 +5,6 @@ class GemPrimary {
       // { color: "red", imgSrc: "./assets/images/cat.png" },
       // { color: "green", imgSrc: "./assets/images/cat.png" },
       // { color: "yellow", imgSrc: "./assets/images/cat.png" }
-
       { type: "gem", color: "blue", imgSrc: "./assets/images/SPF2T_Gem_Blue.png" },
       { type: "gem", color: "red", imgSrc: "./assets/images/SPF2T_Gem_Red.png" },
       { type: "gem", color: "green", imgSrc: "./assets/images/SPF2T_Gem_Green.png" },
@@ -105,4 +104,4 @@ class GemPrimary {
 
 }
 
-module.exports = GemPrimary;
+export default GemPrimary;
