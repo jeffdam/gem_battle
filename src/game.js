@@ -246,7 +246,6 @@ class Game {
     } 
   }
 
-
   handleKeyEvent() {
     window.addEventListener("keydown", (event) => {
       if (event.defaultPrevented) {
