@@ -8,7 +8,7 @@ class Game {
     this.ctxScoreboard = ctxScoreboard;
     this.ctxNextGem = ctxNextGem;
 
-    this.gemCount = 1;
+    this.gemCount = 0;
     this.gemVel = 1;
     this.gemPrimaryLive = undefined;
     this.gemSecondaryLive = undefined;
@@ -493,12 +493,12 @@ class Game {
   }
 
   reset() {
-    this.gemVel = 1;
     this.gemCount = 0;
+    this.gemVel = 1;
     this.gemPrimaryLive = undefined;
     this.gemSecondaryLive = undefined;
-    this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem);
-    this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem);
+    this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem, this.gemVel);
+    this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem, this.gemVel);
     this.gemStorage = [
       [this.gemNull],
       [this.gemNull],
