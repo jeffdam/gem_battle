@@ -1,5 +1,5 @@
 class GemPrimary {
-  constructor(ctx) {
+  constructor(ctx, vel) {
     const gemImages = [
       // { color: "blue", imgSrc: "./assets/images/cat.png" },
       // { color: "red", imgSrc: "./assets/images/cat.png" },
@@ -37,7 +37,7 @@ class GemPrimary {
     img.src = this.gem.imgSrc;
     this.img = img;
     this.widthHeight = 50;
-    this.vel = 5;
+    this.vel = vel;
     this.col = 3;
     this.posRel = 2;
     this.otherVel = 5;
@@ -55,7 +55,7 @@ class GemPrimary {
   }
 
   hardDrop(colHeight) {
-    this.posY = this.posRel === 0 ? colHeight - 100 : colHeight - 50;
+    this.posY = this.posRel === 0 ? colHeight - 75 : colHeight - 25;
   }
 
   goLive(ctx) {
