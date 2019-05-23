@@ -186,7 +186,8 @@ class Game {
       if (arr[i].color === color && !this.deleteArr[colNum].includes(i)) {
         hasAdj = true;
         this.deleteArr[colNum].push(i);
-        this.checkLeftRight(color, colNum, i);
+        this.checkRow(colNum, i, color);
+        // this.checkLeftRight(color, colNum, i);
         this.score += 50;
       } else {
         break;
@@ -201,7 +202,9 @@ class Game {
       if (arr[i].color === color && !this.deleteArr[colNum].includes(i + idx + 1)) {
         hasAdj = true;
         this.deleteArr[colNum].push(i + idx + 1);
-        this.checkLeftRight(color, colNum, i + idx + 1);
+        // this.checkLeftRight(color, colNum, i + idx + 1);
+        this.checkRow(colNum, i + idx + 1, color);
+
         this.score += 50;
       } else {
         break;
@@ -300,7 +303,9 @@ class Game {
     });
     if (!clearedAllValidCrashGems) {
       this.handleCrashGems();
-    }
+    } 
+
+
   }
 
 
@@ -412,7 +417,6 @@ class Game {
       
       this.handleCrashGems();
 
-
       if (this.colHeight(3) >= -50) {
         this.score += 10;
         this.renderCycle();
@@ -421,7 +425,7 @@ class Game {
         this.ctx.globalAlpha = 0.5;
         this.ctx.fillRect(0, 0, 300, 650);
         this.ctx.globalAlpha = 1;
-        this.ctx.fillRect(0, 275, 300, 130);
+        this.ctx.fillRect(0, 275, 300, 150);
         this.ctx.fillStyle = "red";
         // this.ctx.font = "40px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
         this.ctx.font = "40px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
@@ -429,8 +433,8 @@ class Game {
         this.ctx.fillText("GAME OVER", 150, 330);
         this.ctx.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
         this.ctx.textAlign = "center"; 
-        this.ctx.fillText(`Your score: ${this.score}`, 150, 355);
-        this.ctx.fillText(`Press Enter to play again.`, 150, 385);
+        this.ctx.fillText(`Your score: ${this.score}`, 150, 365);
+        this.ctx.fillText(`Press Enter to play again.`, 150, 395);
 
         const handleEnter = (event) => {
           if (event.defaultPrevented) {
