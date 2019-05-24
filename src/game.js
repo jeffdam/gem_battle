@@ -10,6 +10,7 @@ class Game {
     this.ctxNextGem = ctxNextGem;
 
     this.gemCount = 0;
+    this.gemLevel = 15;
     this.gemVel = 1;
     this.gemPrimaryLive = undefined;
     this.gemSecondaryLive = undefined;
@@ -376,8 +377,9 @@ class Game {
       
       this.handleCrashGems();
 
-      if (this.gemCount % 15 === 0) {
+      if (this.gemCount % this.gemLevel === 0) {
         this.gemVel++;
+        this.gemLevel += 15;
       }
 
       if (this.colHeight(3) >= -50) {
