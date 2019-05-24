@@ -1,11 +1,9 @@
 export const startGameMenu = (ctx, ctxNextGem, ctxScoreboard, gameStart) => {
-  ctxNextGem.fillRect(0, 0, 300, 650);
   ctxNextGem.fillStyle = "black";
+  ctxNextGem.fillRect(0, 0, 300, 650);
   ctxScoreboard.fillRect(0, 0, 300, 650);
-  ctxScoreboard.fillStyle = "black";
 
   ctx.fillRect(0, 0, 300, 650);
-  ctx.fillStyle = "black";
   ctx.textAlign = "center";
   ctx.fillStyle = "white";
   const linePosYStart = 125;
@@ -66,7 +64,7 @@ export const endGameMenu = (ctx, score, gameStart) => {
   ctx.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
   ctx.textAlign = "center";
   ctx.fillText(`Your score: ${score}`, 150, 365);
-  ctx.fillText(`Press Enter to play again.`, 150, 395);
+  ctx.fillText(`Press Enter to play again`, 150, 395);
 
   const handleEnter = (event) => {
     if (event.defaultPrevented) {
