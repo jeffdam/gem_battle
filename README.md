@@ -14,9 +14,9 @@ This game is inspired by the classic arcade game [Super Puzzle Fighter II Turbo]
 
 ## Architecture and Technologies
 
-- Vanilla JavaScript for game logic.
-- HTML5 Canvas for rendering.
-- Webpack to bundle various scripts into a single source.
+- Vanilla JavaScript for game logic
+- HTML5 Canvas for rendering
+- Webpack to bundle various scripts into a single source
 
 ## Functionality
 
@@ -27,6 +27,8 @@ Using features of Canvas such as requestAnimationFrame (for optimized browser an
 ### Controls
 
 Players can press z/x keys to rotate their gem pair clockwise/counter-clockwise. Players can press left/right keys to move their gem pair left or right. Players can press down keys to immediately drop their gem pairs.
+
+<img src="./assets/images/readme_img/mid-game.gif" width="80%">
 
 ### Display
 
