@@ -379,7 +379,7 @@ class Game {
 
       if (this.gemCount % this.gemLevel === 0) {
         this.gemVel++;
-        this.gemLevel += 15;
+        this.gemLevel += 25;
       }
 
       if (this.colHeight(3) >= -50) {
