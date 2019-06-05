@@ -1,4 +1,5 @@
 export const startGameMenu = (ctx, ctxNextGem, ctxScoreboard, gameStart) => {
+  ctx.font = "24px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
   ctxNextGem.fillStyle = "black";
   ctxNextGem.fillRect(0, 0, 300, 650);
   ctxScoreboard.fillRect(0, 0, 300, 650);
@@ -9,7 +10,6 @@ export const startGameMenu = (ctx, ctxNextGem, ctxScoreboard, gameStart) => {
   const linePosYStart = 125;
   const subLines = (lineNum) => (linePosYStart + (lineNum * 30));
 
-  ctx.font = "24px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
   ctx.fillText("Welcome to", 150, 40, 280);
   ctx.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
   ctx.fillText("Gem Battle!", 150, 75, 280);
