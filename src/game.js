@@ -4,8 +4,9 @@ import GemNull from './gemNull';
 import { startGameMenu, endGameMenu } from "./menus";
 
 class Game {
-  constructor(ctx, ctxScoreboard, ctxNextGem) {
+  constructor(ctx, ctxScoreboard, ctxNextGem, ctxMenu) {
     this.ctx = ctx;
+    this.ctxMenu = ctxMenu;
     this.ctxScoreboard = ctxScoreboard;
     this.ctxNextGem = ctxNextGem;
 
@@ -359,6 +360,7 @@ class Game {
   renderCycle() {
     let id = requestAnimationFrame(this.renderCycle);
 
+    this.ctxMenu.clearRect(5,5,window.innerWidth-10,window.innerHeight-10);
     this.ctx.clearRect(0, 0, 300, 650);
     this.ctxNextGem.clearRect(0, 0, 300, 650);
     this.ctxScoreboard.clearRect(0, 0, 300, 650);
@@ -394,7 +396,13 @@ class Game {
   }
   
   gameRender() {
-    startGameMenu(this.ctx, this.ctxNextGem, this.ctxScoreboard, this.gameStart);
+    startGameMenu(
+      this.ctx,
+      this.ctxNextGem,
+      this.ctxScoreboard,
+      this.gameStart,
+      this.ctxMenu
+    );
   }
 
   gameStart() {

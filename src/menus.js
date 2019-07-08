@@ -1,35 +1,34 @@
-export const startGameMenu = (ctx, ctxNextGem, ctxScoreboard, gameStart) => {
-  ctx.font = "24px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-  ctxNextGem.fillStyle = "black";
-  ctxNextGem.fillRect(0, 0, 300, 650);
-  ctxScoreboard.fillRect(0, 0, 300, 650);
+export const startGameMenu = (ctx, ctxNextGem, ctxScoreboard, gameStart, ctxMenu) => {  
+  ctxMenu.font = "24px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
+  ctxMenu.fillStyle = "black";
+  ctxMenu.fillRect(5,5,window.innerWidth-10,window.innerHeight-10);
+  ctxMenu.textAlign = "center";
+  ctxMenu.fillStyle = "white";
 
-  ctx.fillRect(0, 0, 300, 650);
-  ctx.textAlign = "center";
-  ctx.fillStyle = "white";
+  const xPos = (window.innerWidth/2) ;
   const linePosYStart = 125;
   const subLines = (lineNum) => (linePosYStart + (lineNum * 30));
 
-  ctx.fillText("Welcome to", 150, 40, 280);
-  ctx.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-  ctx.fillText("Gem Battle!", 150, 75, 280);
+  ctxMenu.fillText("Welcome to", xPos, 40, 280);
+  ctxMenu.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
+  ctxMenu.fillText("Gem Battle!", xPos, 75, 280);
 
-  ctx.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-  ctx.fillText("Clear as many gems as you can!", 150, subLines(0), 280);
-  ctx.fillText("Use left arrow to move left.", 150, subLines(1), 280);
-  ctx.fillText("Use right arrow to move right.", 150, subLines(2), 280);
-  ctx.fillText("Use down arrow to hard drop.", 150, subLines(3), 280);
-  ctx.fillText("Use 'z' to rotate clockwise.", 150, subLines(4), 280);
-  ctx.fillText("Use 'x' to rotate counter-clockwise.", 150, subLines(5), 280);
+  ctxMenu.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
+  ctxMenu.fillText("Clear as many gems as you can!", xPos, subLines(0), 280);
+  ctxMenu.fillText("Use left arrow to move left.", xPos, subLines(1), 280);
+  ctxMenu.fillText("Use right arrow to move right.", xPos, subLines(2), 280);
+  ctxMenu.fillText("Use down arrow to hard drop.", xPos, subLines(3), 280);
+  ctxMenu.fillText("Use 'z' to rotate clockwise.", xPos, subLines(4), 280);
+  ctxMenu.fillText("Use 'x' to rotate counter-clockwise.", xPos, subLines(5), 280);
 
-  ctx.fillText("Place similar colored gems next", 150, subLines(7), 280);
-  ctx.fillText("to each other. Use the round gems", 150, subLines(8), 280);
-  ctx.fillText("to clear the same colored gems.", 150, subLines(9), 280);
-  ctx.fillText("The game is over when the drop", 150, subLines(10), 280);
-  ctx.fillText("alley is blocked.", 150, subLines(11), 280);
+  ctxMenu.fillText("Place similar colored gems next", xPos, subLines(7), 280);
+  ctxMenu.fillText("to each other. Use the round gems", xPos, subLines(8), 280);
+  ctxMenu.fillText("to clear the same colored gems.", xPos, subLines(9), 280);
+  ctxMenu.fillText("The game is over when the drop", xPos, subLines(10), 280);
+  ctxMenu.fillText("alley is blocked.", xPos, subLines(11), 280);
 
-  ctx.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-  ctx.fillText("Press Enter to Start", 150, subLines(13), 280);
+  ctxMenu.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
+  ctxMenu.fillText("Press Enter to Start", xPos, subLines(13), 280);
 
   const handleEnter = (event) => {
     if (event.defaultPrevented) {
