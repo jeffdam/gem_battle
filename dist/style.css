@@ -90,8 +90,11 @@ i {
   -webkit-text-stroke: 0;
 }
 
-.fa-stack {
+.fa-square {
   cursor: pointer;
+}
+
+.fa-stack {
   z-index: -2;
   font-size: 40px;
   width: 2em !important;
