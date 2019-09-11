@@ -13,14 +13,14 @@ h1 {
   font-size: 50px;
   color: red;
   text-shadow: 0px 0px 20px #000;
-  margin: 0;
+  margin: 20px 0;
 }
 
 h2 {
   color: red;
   font-size: 36px;
   text-shadow: 0px 0px 20px #000;
-  margin: 0;
+  margin: 20px 0;
 }
 
 .background-image::after {
@@ -88,15 +88,39 @@ h2 {
 
 i {
   -webkit-text-stroke: 0;
-}
-
-.fa-square {
-  cursor: pointer;
-}
-
-.fa-stack {
-  z-index: -2;
   font-size: 40px;
-  width: 2em !important;
+  margin-right: 10px;
 }
 
+i::before {
+  content: "";
+  background: black;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+a {
+  color: inherit; 
+}
+
+a:hover {
+  opacity: 0.75;
+}
+
+.link-icons {
+  display: flex;
+  margin: 20px 0;
+}
+
+#menu-test {
+  background: black;
+  padding: 40px;
+  border: 4px solid lightgray;
+  position: fixed;
+  top: 20%;
+  bottom: 20%;
+  left: 20%;
+  right: 20%;
+  color: red;
+  text-align: center
+}

@@ -360,7 +360,6 @@ class Game {
   renderCycle() {
     let id = requestAnimationFrame(this.renderCycle);
 
-    // this.ctxMenu.clearRect(5,5,window.innerWidth-10,window.innerHeight-10);
     this.ctx.clearRect(0, 0, 300, 650);
     this.ctxNextGem.clearRect(0, 0, 300, 650);
     this.ctxScoreboard.clearRect(0, 0, 300, 650);
@@ -397,11 +396,7 @@ class Game {
   
   gameRender() {
     startGameMenu(
-      this.ctx,
-      this.ctxNextGem,
-      this.ctxScoreboard,
-      this.gameStart,
-      this.ctxMenu
+      this.gameStart
     );
   }
 

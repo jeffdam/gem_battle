@@ -5,44 +5,65 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Gem Battle</title>
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/gem_battle.ico">
+  <script src="https://kit.fontawesome.com/3afada453a.js"></script>
+  <link rel="stylesheet" href="./dist/normalize.css" type="text/css">
   <link rel="stylesheet" href="./dist/style.css" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Permanent+Marker&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Sedgwick+Ave+Display&display=swap" rel="stylesheet">
-  <script src="https://kit.fontawesome.com/3afada453a.js"></script>
   <script type="application/javascript" src="./dist/main.js"></script>
 </head>
 <body>
   <main class="background-image">
     <div class="play-fields">
+      <div id="menu-test">
+        <h1>Gem Battle</h1>
+        <h2>Welcome to Gem Battle!</h2>
+        <p>
+          The goal of the game is to clear as many gems as you can! The drop speed increases as time goes on.
+        </p>
+        <p>
+          Press the left and right keys to move horizontally.
+          Press the down key to hard drop.
+          Press 'z' to rotate clockwise.
+          Press 'x' to rotate counter-clockwise.
+        </p>
+        <p>
+          Place similar colored gems next to each other. 
+          Use the round gem to clear the same colored gems.
+          The game is over when the drop alley is blocked.
+        </p>
+        <h3>
+          Press Enter to Start
+        </h3>
+      </div>
       <canvas id="menu"></canvas>
       <canvas id="play-field-1"></canvas>
       <div>
         <h1>GEM BATTLE</h1>
         <div class="link-icons">
-          <span class="fa-stack fa-2x">
-            <i class="fas fa-square fa-stack-2x"></i>
-            <i class="fas fa-info-circle fa-stack-1x fa-inverse"></i>
-          </span>
-          <span class="fa-stack fa-2x">
-            <i class="fas fa-square fa-stack-2x"></i>
-            <i class="fas fa-briefcase fa-stack-1x fa-inverse"></i>
-          </span>
-          <span class="fa-stack fa-2x">
-            <i class="fas fa-square fa-stack-2x"></i>
-            <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
-          </span>
-          <span class="fa-stack fa-2x">
-            <a href="https://github.com/jeffdam/gem_battle" target="_blank">
-              <i class="fas fa-square fa-stack-2x"></i>
-              <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+          <div class="link-icon" title="Info">
+            <i class="fas fa-info-circle fa-inverse"></i>
+          </div>
+          <div class="link-icon" title="Portfolio">
+            <a href="https://jeffdam.com/" target="_blank">
+              <i class="fas fa-briefcase fa-inverse"></i>
             </a>
-          </span>
-          <span class="fa-stack fa-2x">
-            <i class="fas fa-square fa-stack-2x"></i>
-            <i class="fab fa-angellist fa-stack-1x fa-inverse"></i>
-          </span>
-
-
+          </div>
+          <div class="link-icon" title="LinkedIn">
+            <a href="https://www.linkedin.com/in/jeffdam" target="_blank">  
+              <i class="fab fa-linkedin fa-inverse"></i>
+            </a>
+          </div>
+          <div class="link-icon" title="GitHub">
+            <a href="https://github.com/jeffdam/gem_battle" target="_blank">  
+              <i class="fab fa-github fa-inverse"></i>
+            </a>
+          </div>
+          <div class="link-icon" title="AngelList">
+            <a href="https://angel.co/jeff-dam/" target="_blank">  
+              <i class="fab fa-angellist fa-inverse"></i>
+            </a>
+          </div>
         </div>
         <h2>NEXT</h2>
         <canvas id="next-gems"></canvas>
