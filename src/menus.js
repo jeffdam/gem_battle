@@ -34,7 +34,7 @@ export const startGameMenu = (ctx, ctxNextGem, ctxScoreboard, gameStart, ctxMenu
     if (event.defaultPrevented) {
       return;
     }
-    switch (event.key) {
+    switch (event.key) { 
       case "Enter":
         gameStart();
         break;
