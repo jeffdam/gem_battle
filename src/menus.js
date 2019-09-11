@@ -5,7 +5,7 @@ export const startGameMenu = (gameStart) => {
     }
     switch (event.key) { 
       case "Enter":
-        document.getElementById("menu-test").setAttribute("style", "display:none;");
+        document.getElementById("menu").setAttribute("style", "display:none;");
         gameStart();
         break;
       default:
