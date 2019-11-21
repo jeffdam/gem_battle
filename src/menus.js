@@ -21,11 +21,17 @@ export const startGameMenu = (gameStart) => {
 
 
 export const endGameMenu = (ctx, score, gameStart) => {
-  ctx.fillStyle = "black";
-  ctx.globalAlpha = 0.5;
+  let highScore = localStorage.getItem("highscore") || score;
+  if (score >= highScore) {
+    localStorage.setItem("highscore", score);
+    highScore = score;
+  }
+  ctx.fillStyle = "white";
+  ctx.globalAlpha = 0.25;
   ctx.fillRect(0, 0, 300, 650);
+  ctx.fillStyle = "black";
   ctx.globalAlpha = 1;
-  ctx.fillRect(0, 275, 300, 150);
+  ctx.fillRect(0, 275, 300, 180);
   ctx.fillStyle = "red";
   ctx.font = "40px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
   ctx.textAlign = "center";
@@ -33,7 +39,8 @@ export const endGameMenu = (ctx, score, gameStart) => {
   ctx.font = "20px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
   ctx.textAlign = "center";
   ctx.fillText(`Your score: ${score}`, 150, 365);
-  ctx.fillText(`Press Enter to play again`, 150, 395);
+  ctx.fillText(`High score: ${highScore}`, 150, 395);
+  ctx.fillText(`Press Enter to play again`, 150, 425);
 
   const handleEnter = (event) => {
     if (event.defaultPrevented) {

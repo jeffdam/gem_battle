@@ -32,9 +32,8 @@ class GemPrimary {
     this.posY = 60;
     this.color = this.gem.color;
     this.type = this.gem.type;
-    const img = new Image();
-    img.src = this.gem.imgSrc;
-    this.img = img;
+    this.img = new Image();
+    this.img.src = this.gem.imgSrc;
     this.widthHeight = 50;
     this.vel = vel;
     this.col = 3;
