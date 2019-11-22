@@ -62,13 +62,7 @@ class Game {
   }
 
   colHeight(col) {
-    if (this.gemStorage[col]) {
-      return (
-        this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0].posY - 50
-      );
-    } else {
-      return 0;
-    }
+    return this.gemStorage[col] ? this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0].posY - 50 : 0;
   }
 
   moveHorizontal(direction) {
@@ -161,20 +155,17 @@ class Game {
   }
 
   checkCrashGems(scoreBonus) {
-    const deleteArr = [[], [], [], [], [], []];
-    const remove = [];
+    const deleteArr = [[], [], [], [], [], []], remove = [];
     this.gemStorage.forEach((col, colNum) => {
-      col.forEach((gem, idx) => {
+      col.forEach((gem, rowNum) => {
         if (gem.type === "crash") {
-          remove.push(...this.checkNeighbors(colNum, idx, gem.color));
+          remove.push(...this.checkNeighbors(colNum, rowNum, gem.color));
         }
       });
     });
-    console.log(scoreBonus, 50 * remove.length,50 * remove.length * scoreBonus);
     this.score += 50 * remove.length * scoreBonus;
     remove.forEach(gem => {
-      const gemColRow = gem.split("#");
-      deleteArr[gemColRow[0]].push(parseInt(gemColRow[1]));
+      deleteArr[gem.col].push(gem.row);
     });
 
     return deleteArr;
@@ -201,7 +192,7 @@ class Game {
         return;
       seen[`${col}#${row}`] = true;
       if (gemStorage[col][row].color === color) {
-        remove.push(`${col}#${row}`);
+        remove.push({col, row});
       }
       direction.forEach(dir => {
         let adjCol = col + dir[0],
@@ -215,22 +206,9 @@ class Game {
     return remove.length > 1 ? remove : [];
   }
 
-  // updateGem(gem, colHeight){
-  //   let id = requestAnimationFrame(() => {
-  //     const gemSave = gem;
-  //     const colHeightSave = colHeight;
-  //     this.updateGem(gemSave, colHeightSave);
-  //   });
-  //   gem.drop(colHeight, 10);
-  //   if (gem.vel === 0) {
-  //     cancelAnimationFrame(id);
-  //   }
-  // }
-
   handleCrashGems(scoreBonus = 1) {
     let clearedAllValidCrashGems = true;
     const deleteArr = this.checkCrashGems(scoreBonus);
-    // console.log(scoreBonus, deleteArr);
     for (let col = 0; col < 6; col++) {
       if (deleteArr[col].length > 0) {
         clearedAllValidCrashGems = false;
@@ -475,7 +453,6 @@ class Game {
       [this.gemNull]
     ];
     this.score = 0;
-    this.deleteArr = [[], [], [], [], [], []];
   }
 }
 
