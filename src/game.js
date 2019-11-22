@@ -202,6 +202,7 @@ class Game {
     this.gemStorage.forEach((col, colNum) => {
       col.forEach((gem,idx) => {
         if (gem.type === "crash") {
+          this.checkNeighbors(colNum, idx, gem.color);
           const colHasAdj = this.checkCol(colNum, idx, gem.color);
           const rowHasAdj = this.checkRow(colNum, idx, gem.color);
           if (colHasAdj || rowHasAdj) {
@@ -213,6 +214,38 @@ class Game {
         }
       });
     });
+  }
+
+  checkNeighbors(col, row, color) {
+    const direction = [[-1, 0],[0,-1],[1,0],[0,1]];
+    const seen = {};
+    const gemStorage = this.gemStorage;
+    const remove = [];
+    helper(col, row);
+    
+    function helper(col, row) {
+      if (
+        seen[`${col}#${row}`] ||
+        !gemStorage[col][row] ||
+        gemStorage[col][row].color !== color
+      )
+        return;
+      seen[`${col}#${row}`] = true;
+      if (gemStorage[col][row].color === color) {
+        remove.push(`${col}#${row}`);
+      }
+      direction.forEach(dir => {
+        let adjCol = col + dir[0],
+          adjRow = row + dir[1];
+        if (adjCol >= 0 && adjCol <= 5 && !seen[`${adjCol}#${adjRow}`]) {
+          helper(adjCol, adjRow);
+        }
+      });
+    }
+    if (remove.length < 2) {
+      remove.pop();
+    }
+    console.log(remove);
   }
 
   // updateGem(gem, colHeight){
@@ -230,6 +263,7 @@ class Game {
   handleCrashGems() {
     let clearedAllValidCrashGems = true;
     this.checkCrashGems();
+    console.log(this.deleteArr);
     for (let colNum = 0; colNum < 6; colNum++) {
       if (this.deleteArr[colNum].length > 0) { clearedAllValidCrashGems = false;}
       this.gemStorage[colNum] = this.gemStorage[colNum].filter((gem, gemIdx) => !this.deleteArr[colNum].includes(gemIdx));
