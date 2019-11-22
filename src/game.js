@@ -1,7 +1,7 @@
 import GemPrimary from './gemPrimary';
 import GemSecondary from './gemSecondary';
-import GemNull from './gemNull';
 import { startGameMenu, endGameMenu } from "./menus";
+import GemStorage from './gemStorage';
 
 class Game {
   constructor(ctx, ctxScoreboard, ctxNextGem, ctxMenu) {
@@ -17,72 +17,30 @@ class Game {
     this.gemSecondaryLive = undefined;
     this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem, this.gemVel);
     this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem, this.gemVel);
-    this.gemNull = new GemNull(this.ctx);
-    this.gemStorage = [
-      [this.gemNull],
-      [this.gemNull],
-      [this.gemNull],
-      [this.gemNull],
-      [this.gemNull],
-      [this.gemNull]
-    ];
+    this.gemStorage = new GemStorage(this.ctx);
     this.score = 0;
     this.renderCycle = this.renderCycle.bind(this);
     this.gameStart = this.gameStart.bind(this);
-  }
-
-  storeCurrentGem() {
-    const gems =
-      this.gemPrimaryLive.posRel === 2
-        ? [this.gemPrimaryLive, this.gemSecondaryLive]
-        : [this.gemSecondaryLive, this.gemPrimaryLive];
-
-    gems.forEach(gem => {
-      switch (gem.posX) {
-        case 0:
-          this.gemStorage[0].push(gem);
-          break;
-        case 50:
-          this.gemStorage[1].push(gem);
-          break;
-        case 100:
-          this.gemStorage[2].push(gem);
-          break;
-        case 150:
-          this.gemStorage[3].push(gem);
-          break;
-        case 200:
-          this.gemStorage[4].push(gem);
-          break;
-        case 250:
-          this.gemStorage[5].push(gem);
-          break;
-      }
-    });
-  }
-
-  colHeight(col) {
-    return this.gemStorage[col] ? this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0].posY - 50 : 0;
   }
 
   moveHorizontal(direction) {
     if (direction === "left") {
       this.gemPrimaryLive.moveHorizontal(
         "left",
-        this.colHeight(this.gemPrimaryLive.col - 1)
+        this.gemStorage.height(this.gemPrimaryLive.col - 1)
       );
       this.gemSecondaryLive.moveHorizontal(
         "left",
-        this.colHeight(this.gemSecondaryLive.col - 1)
+        this.gemStorage.height(this.gemSecondaryLive.col - 1)
       );
     } else {
       this.gemPrimaryLive.moveHorizontal(
         "right",
-        this.colHeight(this.gemPrimaryLive.col + 1)
+        this.gemStorage.height(this.gemPrimaryLive.col + 1)
       );
       this.gemSecondaryLive.moveHorizontal(
         "right",
-        this.colHeight(this.gemSecondaryLive.col + 1)
+        this.gemStorage.height(this.gemSecondaryLive.col + 1)
       );
     }
   }
@@ -96,23 +54,23 @@ class Game {
     let adjColHeight;
     switch (this.gemSecondaryLive.posRel) {
       case 0:
-        adjColHeight = this.colHeight(this.gemSecondaryLive.col + 1) - 50;
+        adjColHeight = this.gemStorage.height(this.gemSecondaryLive.col + 1) - 50;
         if (this.gemSecondaryLive.posY < adjColHeight) {
           this.rotate("cw");
         }
         break;
       case 1:
-        adjColHeight = this.colHeight(this.gemSecondaryLive.col - 1) - 50;
+        adjColHeight = this.gemStorage.height(this.gemSecondaryLive.col - 1) - 50;
         if (
           this.gemSecondaryLive.posY <
-            this.colHeight(this.gemSecondaryLive.col) &&
+            this.gemStorage.height(this.gemSecondaryLive.col) &&
           this.gemSecondaryLive.posY < adjColHeight
         ) {
           this.rotate("cw");
         }
         break;
       case 2:
-        adjColHeight = this.colHeight(this.gemSecondaryLive.col - 1);
+        adjColHeight = this.gemStorage.height(this.gemSecondaryLive.col - 1);
         if (this.gemSecondaryLive.posY < adjColHeight) {
           this.rotate("cw");
         }
@@ -127,7 +85,7 @@ class Game {
     let adjColHeight;
     switch (this.gemSecondaryLive.posRel) {
       case 0:
-        adjColHeight = this.colHeight(this.gemSecondaryLive.col - 1) - 50;
+        adjColHeight = this.gemStorage.height(this.gemSecondaryLive.col - 1) - 50;
         if (this.gemSecondaryLive.posY < adjColHeight) {
           this.rotate("ccw");
         }
@@ -136,16 +94,16 @@ class Game {
         this.rotate("ccw");
         break;
       case 2:
-        adjColHeight = this.colHeight(this.gemSecondaryLive.col + 1);
+        adjColHeight = this.gemStorage.height(this.gemSecondaryLive.col + 1);
         if (this.gemSecondaryLive.posY < adjColHeight) {
           this.rotate("ccw");
         }
         break;
       case 3:
-        adjColHeight = this.colHeight(this.gemSecondaryLive.col + 1) - 50;
+        adjColHeight = this.gemStorage.height(this.gemSecondaryLive.col + 1) - 50;
         if (
           this.gemSecondaryLive.posY <
-            this.colHeight(this.gemSecondaryLive.col) &&
+            this.gemStorage.height(this.gemSecondaryLive.col) &&
           this.gemSecondaryLive.posY < adjColHeight
         ) {
           this.rotate("ccw");
@@ -156,7 +114,8 @@ class Game {
 
   checkCrashGems(scoreBonus) {
     const deleteArr = [[], [], [], [], [], []], remove = [];
-    this.gemStorage.forEach((col, colNum) => {
+    const gemStorage = this.gemStorage.get();
+    gemStorage.forEach((col, colNum) => {
       col.forEach((gem, rowNum) => {
         if (gem.type === "crash") {
           remove.push(...this.checkNeighbors(colNum, rowNum, gem.color));
@@ -179,7 +138,7 @@ class Game {
       [0, 1]
     ];
     const seen = {};
-    const gemStorage = this.gemStorage;
+    const gemStorage = this.gemStorage.get();
     const remove = [];
     helper(col, row);
 
@@ -209,15 +168,16 @@ class Game {
   handleCrashGems(scoreBonus = 1) {
     let clearedAllValidCrashGems = true;
     const deleteArr = this.checkCrashGems(scoreBonus);
+    const gemStorage = this.gemStorage.get();
     for (let col = 0; col < 6; col++) {
       if (deleteArr[col].length > 0) {
         clearedAllValidCrashGems = false;
       }
-      this.gemStorage[col] = this.gemStorage[col].filter(
+      gemStorage[col] = gemStorage[col].filter(
         (gem, gemIdx) => !deleteArr[col].includes(gemIdx)
       );
     }
-    this.gemStorage.forEach(col => {
+    gemStorage.forEach(col => {
       col.forEach((gem, idx) => {
         if (idx > 0 && gem.posY < col[idx - 1].posY - 50) {
           gem.updatePosY(col[idx - 1].posY - 50);
@@ -242,28 +202,28 @@ class Game {
             if (
               this.gemPrimaryLive.posRel === 1 &&
               this.gemSecondaryLive.posY <
-                this.colHeight(this.gemSecondaryLive.col - 1)
+                this.gemStorage.height(this.gemSecondaryLive.col - 1)
             ) {
               this.gemPrimaryLive.moveHorizontal(
                 "left",
-                this.colHeight(this.gemSecondaryLive.col)
+                this.gemStorage.height(this.gemSecondaryLive.col)
               );
               this.gemSecondaryLive.moveHorizontal(
                 "left",
-                this.colHeight(this.gemSecondaryLive.col - 1)
+                this.gemStorage.height(this.gemSecondaryLive.col - 1)
               );
             } else if (
               this.gemSecondaryLive.posRel === 1 &&
               this.gemPrimaryLive.posY <
-                this.colHeight(this.gemPrimaryLive.col - 1)
+                this.gemStorage.height(this.gemPrimaryLive.col - 1)
             ) {
               this.gemPrimaryLive.moveHorizontal(
                 "left",
-                this.colHeight(this.gemPrimaryLive.col - 1)
+                this.gemStorage.height(this.gemPrimaryLive.col - 1)
               );
               this.gemSecondaryLive.moveHorizontal(
                 "left",
-                this.colHeight(this.gemPrimaryLive.col)
+                this.gemStorage.height(this.gemPrimaryLive.col)
               );
             } else if (
               this.gemPrimaryLive.posRel !== 3 &&
@@ -277,28 +237,28 @@ class Game {
             if (
               this.gemPrimaryLive.posRel === 3 &&
               this.gemSecondaryLive.posY <
-                this.colHeight(this.gemSecondaryLive.col + 1)
+                this.gemStorage.height(this.gemSecondaryLive.col + 1)
             ) {
               this.gemPrimaryLive.moveHorizontal(
                 "right",
-                this.colHeight(this.gemSecondaryLive.col)
+                this.gemStorage.height(this.gemSecondaryLive.col)
               );
               this.gemSecondaryLive.moveHorizontal(
                 "right",
-                this.colHeight(this.gemSecondaryLive.col + 1)
+                this.gemStorage.height(this.gemSecondaryLive.col + 1)
               );
             } else if (
               this.gemSecondaryLive.posRel === 3 &&
               this.gemPrimaryLive.posY <
-                this.colHeight(this.gemPrimaryLive.col + 1)
+                this.gemStorage.height(this.gemPrimaryLive.col + 1)
             ) {
               this.gemPrimaryLive.moveHorizontal(
                 "right",
-                this.colHeight(this.gemPrimaryLive.col + 1)
+                this.gemStorage.height(this.gemPrimaryLive.col + 1)
               );
               this.gemSecondaryLive.moveHorizontal(
                 "right",
-                this.colHeight(this.gemPrimaryLive.col)
+                this.gemStorage.height(this.gemPrimaryLive.col)
               );
             } else if (
               this.gemPrimaryLive.posRel !== 3 &&
@@ -330,9 +290,9 @@ class Game {
       switch (event.key) {
         case "Down": // IE/Edge specific value
         case "ArrowDown":
-          this.gemPrimaryLive.hardDrop(this.colHeight(this.gemPrimaryLive.col));
+          this.gemPrimaryLive.hardDrop(this.gemStorage.height(this.gemPrimaryLive.col));
           this.gemSecondaryLive.hardDrop(
-            this.colHeight(this.gemSecondaryLive.col)
+            this.gemStorage.height(this.gemSecondaryLive.col)
           );
           break;
         default:
@@ -366,21 +326,13 @@ class Game {
       this.moveStagingToLive();
     }
 
-    this.gemSecondaryLive.drop(this.colHeight(this.gemSecondaryLive.col));
-    this.gemPrimaryLive.drop(this.colHeight(this.gemPrimaryLive.col));
+    this.gemSecondaryLive.drop(this.gemStorage.height(this.gemSecondaryLive.col));
+    this.gemPrimaryLive.drop(this.gemStorage.height(this.gemPrimaryLive.col));
     if (this.gemPrimaryLive.vel === 0) {
       this.gemSecondaryLive.updateOtherVel();
     } else if (this.gemSecondaryLive.vel === 0) {
       this.gemPrimaryLive.updateOtherVel();
     }
-  }
-
-  renderGemStorage() {
-    this.gemStorage.forEach(col => {
-      col.forEach(gem => {
-        gem.render();
-      });
-    });
   }
 
   updateScore() {
@@ -392,12 +344,10 @@ class Game {
 
   renderCycle() {
     let id = requestAnimationFrame(this.renderCycle);
-
     this.ctx.clearRect(0, 0, 300, 650);
     this.ctxNextGem.clearRect(0, 0, 300, 650);
     this.ctxScoreboard.clearRect(0, 0, 300, 650);
-
-    this.renderGemStorage();
+    this.gemStorage.render();
     this.renderStaging();
     this.renderGems();
 
@@ -406,7 +356,7 @@ class Game {
     if (this.gemPrimaryLive.vel === 0 && this.gemSecondaryLive.vel === 0) {
       cancelAnimationFrame(id);
 
-      this.storeCurrentGem();
+      this.gemStorage.store(this.gemPrimaryLive, this.gemSecondaryLive);
       this.moveStagingToLive();
 
       this.handleCrashGems();
@@ -416,7 +366,7 @@ class Game {
         this.gemLevel += 25;
       }
 
-      if (this.colHeight(3) >= -50) {
+      if (this.gemStorage.height(3) >= -50) {
         this.score += 10;
         this.gemCount++;
         this.handleDownArrowKeyEvent();
@@ -444,14 +394,7 @@ class Game {
     this.gemSecondaryLive = undefined;
     this.gemPrimaryStaging = new GemPrimary(this.ctxNextGem, this.gemVel);
     this.gemSecondaryStaging = new GemSecondary(this.ctxNextGem, this.gemVel);
-    this.gemStorage = [
-      [this.gemNull],
-      [this.gemNull],
-      [this.gemNull],
-      [this.gemNull],
-      [this.gemNull],
-      [this.gemNull]
-    ];
+    this.gemStorage = new GemStorage(this.ctx);
     this.score = 0;
   }
 }
