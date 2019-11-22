@@ -24,19 +24,21 @@ class Game {
       [this.gemNull],
       [this.gemNull],
       [this.gemNull],
-      [this.gemNull],
+      [this.gemNull]
     ];
-    this.deleteArr = [[],[],[],[],[],[]];
     this.score = 0;
     this.renderCycle = this.renderCycle.bind(this);
     this.gameStart = this.gameStart.bind(this);
   }
 
-  storeCurrentGem(){
-    const gems = this.gemPrimaryLive.posRel === 2 ? [this.gemPrimaryLive, this.gemSecondaryLive] : [this.gemSecondaryLive, this.gemPrimaryLive];
+  storeCurrentGem() {
+    const gems =
+      this.gemPrimaryLive.posRel === 2
+        ? [this.gemPrimaryLive, this.gemSecondaryLive]
+        : [this.gemSecondaryLive, this.gemPrimaryLive];
 
     gems.forEach(gem => {
-      switch(gem.posX) {
+      switch (gem.posX) {
         case 0:
           this.gemStorage[0].push(gem);
           break;
@@ -61,19 +63,33 @@ class Game {
 
   colHeight(col) {
     if (this.gemStorage[col]) {
-      return this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0].posY - 50;
+      return (
+        this.gemStorage[col].slice(this.gemStorage[col].length - 1)[0].posY - 50
+      );
     } else {
       return 0;
     }
   }
-  
+
   moveHorizontal(direction) {
     if (direction === "left") {
-      this.gemPrimaryLive.moveHorizontal('left', this.colHeight(this.gemPrimaryLive.col - 1));
-      this.gemSecondaryLive.moveHorizontal('left', this.colHeight(this.gemSecondaryLive.col - 1));
+      this.gemPrimaryLive.moveHorizontal(
+        "left",
+        this.colHeight(this.gemPrimaryLive.col - 1)
+      );
+      this.gemSecondaryLive.moveHorizontal(
+        "left",
+        this.colHeight(this.gemSecondaryLive.col - 1)
+      );
     } else {
-      this.gemPrimaryLive.moveHorizontal('right', this.colHeight(this.gemPrimaryLive.col + 1));
-      this.gemSecondaryLive.moveHorizontal('right', this.colHeight(this.gemSecondaryLive.col + 1));
+      this.gemPrimaryLive.moveHorizontal(
+        "right",
+        this.colHeight(this.gemPrimaryLive.col + 1)
+      );
+      this.gemSecondaryLive.moveHorizontal(
+        "right",
+        this.colHeight(this.gemSecondaryLive.col + 1)
+      );
     }
   }
 
@@ -87,20 +103,28 @@ class Game {
     switch (this.gemSecondaryLive.posRel) {
       case 0:
         adjColHeight = this.colHeight(this.gemSecondaryLive.col + 1) - 50;
-        if (this.gemSecondaryLive.posY < adjColHeight) { 
-          this.rotate('cw'); 
+        if (this.gemSecondaryLive.posY < adjColHeight) {
+          this.rotate("cw");
         }
         break;
       case 1:
         adjColHeight = this.colHeight(this.gemSecondaryLive.col - 1) - 50;
-        if (this.gemSecondaryLive.posY < this.colHeight(this.gemSecondaryLive.col) && this.gemSecondaryLive.posY < adjColHeight) { this.rotate('cw'); }
+        if (
+          this.gemSecondaryLive.posY <
+            this.colHeight(this.gemSecondaryLive.col) &&
+          this.gemSecondaryLive.posY < adjColHeight
+        ) {
+          this.rotate("cw");
+        }
         break;
       case 2:
         adjColHeight = this.colHeight(this.gemSecondaryLive.col - 1);
-        if (this.gemSecondaryLive.posY < adjColHeight) { this.rotate('cw'); }
+        if (this.gemSecondaryLive.posY < adjColHeight) {
+          this.rotate("cw");
+        }
         break;
       case 3:
-        this.rotate('cw');
+        this.rotate("cw");
         break;
     }
   }
@@ -110,119 +134,64 @@ class Game {
     switch (this.gemSecondaryLive.posRel) {
       case 0:
         adjColHeight = this.colHeight(this.gemSecondaryLive.col - 1) - 50;
-        if (this.gemSecondaryLive.posY < adjColHeight) { this.rotate('ccw'); }
+        if (this.gemSecondaryLive.posY < adjColHeight) {
+          this.rotate("ccw");
+        }
         break;
       case 1:
-        this.rotate('ccw');
+        this.rotate("ccw");
         break;
       case 2:
         adjColHeight = this.colHeight(this.gemSecondaryLive.col + 1);
-        if (this.gemSecondaryLive.posY < adjColHeight) { this.rotate('ccw'); }
+        if (this.gemSecondaryLive.posY < adjColHeight) {
+          this.rotate("ccw");
+        }
         break;
       case 3:
         adjColHeight = this.colHeight(this.gemSecondaryLive.col + 1) - 50;
-        if (this.gemSecondaryLive.posY < this.colHeight(this.gemSecondaryLive.col) && this.gemSecondaryLive.posY < adjColHeight) { this.rotate('ccw'); }
-        break;
-    }
-  }
-  
-  removeBelow(arr, color, colNum) {
-    let hasAdj = false;
-    for (let i = arr.length-1; i > 0; i--) {
-      if (arr[i].color === color && !this.deleteArr[colNum].includes(i)) {
-        hasAdj = true;
-        this.deleteArr[colNum].push(i);
-        this.checkRow(colNum, i, color);
-        this.score += 50;
-      } else {
-        break;
-      }
-    } 
-    return hasAdj;
-  }
-
-  removeAbove(arr, color, colNum, idx) {
-    let hasAdj = false;
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i].color === color && !this.deleteArr[colNum].includes(i + idx + 1)) {
-        hasAdj = true;
-        this.deleteArr[colNum].push(i + idx + 1);
-        this.checkRow(colNum, i + idx + 1, color);
-
-        this.score += 50;
-      } else {
-        break;
-      }
-    }
-    return hasAdj;
-  }
-
-  checkCol(colNum, idx, color) {
-    let column = this.gemStorage[colNum];
-    const below = column.slice(0, idx);
-    const above = column.slice(idx+1);
-    const belowHasAdj = this.removeBelow(below, color, colNum);
-    const aboveHasAdj =  this.removeAbove(above, color, colNum, idx);
-    return (belowHasAdj || aboveHasAdj);
-  }
-
-  checkRow(colNum, idx, color) {
-    let adjGem;
-    let hasAdj = false;
-    for (let i = colNum - 1; i >= 0; i--) {
-      adjGem = this.gemStorage[i][idx];
-      if (adjGem && adjGem.color === color) {
-        hasAdj = true;
-        if (!this.deleteArr[i].includes(idx)) {
-          this.deleteArr[i].push(idx);
-          this.score += 50;
+        if (
+          this.gemSecondaryLive.posY <
+            this.colHeight(this.gemSecondaryLive.col) &&
+          this.gemSecondaryLive.posY < adjColHeight
+        ) {
+          this.rotate("ccw");
         }
-        this.checkCol(i, idx, color);
-      } else {
         break;
-      }
     }
-    for (let j = colNum + 1; j <= 5; j++) {
-      adjGem = this.gemStorage[j][idx];
-      if (adjGem && adjGem.color === color) {
-        hasAdj = true;
-        if (!this.deleteArr[j].includes(idx)) {
-          this.deleteArr[j].push(idx);
-          this.score += 50;
-        }
-        this.checkCol(j, idx, color);
-      } else {
-        break;
-      }
-    }
-    return hasAdj;
   }
 
-  checkCrashGems() {
+  checkCrashGems(scoreBonus) {
+    const deleteArr = [[], [], [], [], [], []];
+    const remove = [];
     this.gemStorage.forEach((col, colNum) => {
-      col.forEach((gem,idx) => {
+      col.forEach((gem, idx) => {
         if (gem.type === "crash") {
-          this.checkNeighbors(colNum, idx, gem.color);
-          const colHasAdj = this.checkCol(colNum, idx, gem.color);
-          const rowHasAdj = this.checkRow(colNum, idx, gem.color);
-          if (colHasAdj || rowHasAdj) {
-            if (!this.deleteArr[colNum].includes(idx)) {
-              this.deleteArr[colNum].push(idx);
-              this.score += 50;
-            }
-          }
+          remove.push(...this.checkNeighbors(colNum, idx, gem.color));
         }
       });
     });
+    console.log(scoreBonus, 50 * remove.length,50 * remove.length * scoreBonus);
+    this.score += 50 * remove.length * scoreBonus;
+    remove.forEach(gem => {
+      const gemColRow = gem.split("#");
+      deleteArr[gemColRow[0]].push(parseInt(gemColRow[1]));
+    });
+
+    return deleteArr;
   }
 
   checkNeighbors(col, row, color) {
-    const direction = [[-1, 0],[0,-1],[1,0],[0,1]];
+    const direction = [
+      [-1, 0],
+      [0, -1],
+      [1, 0],
+      [0, 1]
+    ];
     const seen = {};
     const gemStorage = this.gemStorage;
     const remove = [];
     helper(col, row);
-    
+
     function helper(col, row) {
       if (
         seen[`${col}#${row}`] ||
@@ -242,10 +211,8 @@ class Game {
         }
       });
     }
-    if (remove.length < 2) {
-      remove.pop();
-    }
-    console.log(remove);
+
+    return remove.length > 1 ? remove : [];
   }
 
   // updateGem(gem, colHeight){
@@ -260,73 +227,125 @@ class Game {
   //   }
   // }
 
-  handleCrashGems() {
+  handleCrashGems(scoreBonus = 1) {
     let clearedAllValidCrashGems = true;
-    this.checkCrashGems();
-    console.log(this.deleteArr);
-    for (let colNum = 0; colNum < 6; colNum++) {
-      if (this.deleteArr[colNum].length > 0) { clearedAllValidCrashGems = false;}
-      this.gemStorage[colNum] = this.gemStorage[colNum].filter((gem, gemIdx) => !this.deleteArr[colNum].includes(gemIdx));
+    const deleteArr = this.checkCrashGems(scoreBonus);
+    // console.log(scoreBonus, deleteArr);
+    for (let col = 0; col < 6; col++) {
+      if (deleteArr[col].length > 0) {
+        clearedAllValidCrashGems = false;
+      }
+      this.gemStorage[col] = this.gemStorage[col].filter(
+        (gem, gemIdx) => !deleteArr[col].includes(gemIdx)
+      );
     }
-    this.deleteArr = [[], [], [], [], [], []];
-    this.gemStorage.forEach((col) => {
+    this.gemStorage.forEach(col => {
       col.forEach((gem, idx) => {
         if (idx > 0 && gem.posY < col[idx - 1].posY - 50) {
           gem.updatePosY(col[idx - 1].posY - 50);
-          // this.updateGem(gem, col[idx-1].posY-50);
         }
       });
     });
     if (!clearedAllValidCrashGems) {
-      this.handleCrashGems();
-    } 
+      this.handleCrashGems(scoreBonus + 1);
+    }
   }
 
   handleKeyEvent() {
-    window.addEventListener("keydown", (event) => {
-      if (event.defaultPrevented) {
-        return; // Do nothing if the event was already processed
-      }
-      switch (event.key) {
-        case "Left": // IE/Edge specific value
-        case "ArrowLeft":
-          if (this.gemPrimaryLive.posRel === 1 && this.gemSecondaryLive.posY < this.colHeight(this.gemSecondaryLive.col - 1)) {
-            this.gemPrimaryLive.moveHorizontal('left', this.colHeight(this.gemSecondaryLive.col));
-            this.gemSecondaryLive.moveHorizontal('left', this.colHeight(this.gemSecondaryLive.col - 1));
-          } else if (this.gemSecondaryLive.posRel === 1 && this.gemPrimaryLive.posY < this.colHeight(this.gemPrimaryLive.col - 1)) {
-            this.gemPrimaryLive.moveHorizontal('left', this.colHeight(this.gemPrimaryLive.col - 1));
-            this.gemSecondaryLive.moveHorizontal('left', this.colHeight(this.gemPrimaryLive.col));
-          } else if (this.gemPrimaryLive.posRel !== 3 && this.gemSecondaryLive.posRel !== 3) {
-            this.moveHorizontal('left');
-          } 
-          break;
-        case "Right": // IE/Edge specific value
-        case "ArrowRight":
-          if (this.gemPrimaryLive.posRel === 3 && this.gemSecondaryLive.posY < this.colHeight(this.gemSecondaryLive.col + 1)) {
-            this.gemPrimaryLive.moveHorizontal('right', this.colHeight(this.gemSecondaryLive.col));
-            this.gemSecondaryLive.moveHorizontal('right', this.colHeight(this.gemSecondaryLive.col + 1));
-          } else if (this.gemSecondaryLive.posRel === 3 && this.gemPrimaryLive.posY < this.colHeight(this.gemPrimaryLive.col + 1)) {
-            this.gemPrimaryLive.moveHorizontal('right', this.colHeight(this.gemPrimaryLive.col + 1));
-            this.gemSecondaryLive.moveHorizontal('right', this.colHeight(this.gemPrimaryLive.col));
-          } else if (this.gemPrimaryLive.posRel !== 3 && this.gemSecondaryLive.posRel !== 3){
-            this.moveHorizontal('right');
-          } 
-          break;
-        case "z": // Rotate Clockwise
-          this.rotateCW(); 
-          break;
-        case "x": // Rotate Counter-clockwise
-          this.rotateCCW();
-          break;
-        default:
-          return; // Quit when this doesn't handle the key event.
-      }
-      event.preventDefault();
-    }, true);
+    window.addEventListener(
+      "keydown",
+      event => {
+        if (event.defaultPrevented) {
+          return; // Do nothing if the event was already processed
+        }
+        switch (event.key) {
+          case "Left": // IE/Edge specific value
+          case "ArrowLeft":
+            if (
+              this.gemPrimaryLive.posRel === 1 &&
+              this.gemSecondaryLive.posY <
+                this.colHeight(this.gemSecondaryLive.col - 1)
+            ) {
+              this.gemPrimaryLive.moveHorizontal(
+                "left",
+                this.colHeight(this.gemSecondaryLive.col)
+              );
+              this.gemSecondaryLive.moveHorizontal(
+                "left",
+                this.colHeight(this.gemSecondaryLive.col - 1)
+              );
+            } else if (
+              this.gemSecondaryLive.posRel === 1 &&
+              this.gemPrimaryLive.posY <
+                this.colHeight(this.gemPrimaryLive.col - 1)
+            ) {
+              this.gemPrimaryLive.moveHorizontal(
+                "left",
+                this.colHeight(this.gemPrimaryLive.col - 1)
+              );
+              this.gemSecondaryLive.moveHorizontal(
+                "left",
+                this.colHeight(this.gemPrimaryLive.col)
+              );
+            } else if (
+              this.gemPrimaryLive.posRel !== 3 &&
+              this.gemSecondaryLive.posRel !== 3
+            ) {
+              this.moveHorizontal("left");
+            }
+            break;
+          case "Right": // IE/Edge specific value
+          case "ArrowRight":
+            if (
+              this.gemPrimaryLive.posRel === 3 &&
+              this.gemSecondaryLive.posY <
+                this.colHeight(this.gemSecondaryLive.col + 1)
+            ) {
+              this.gemPrimaryLive.moveHorizontal(
+                "right",
+                this.colHeight(this.gemSecondaryLive.col)
+              );
+              this.gemSecondaryLive.moveHorizontal(
+                "right",
+                this.colHeight(this.gemSecondaryLive.col + 1)
+              );
+            } else if (
+              this.gemSecondaryLive.posRel === 3 &&
+              this.gemPrimaryLive.posY <
+                this.colHeight(this.gemPrimaryLive.col + 1)
+            ) {
+              this.gemPrimaryLive.moveHorizontal(
+                "right",
+                this.colHeight(this.gemPrimaryLive.col + 1)
+              );
+              this.gemSecondaryLive.moveHorizontal(
+                "right",
+                this.colHeight(this.gemPrimaryLive.col)
+              );
+            } else if (
+              this.gemPrimaryLive.posRel !== 3 &&
+              this.gemSecondaryLive.posRel !== 3
+            ) {
+              this.moveHorizontal("right");
+            }
+            break;
+          case "z": // Rotate Clockwise
+            this.rotateCW();
+            break;
+          case "x": // Rotate Counter-clockwise
+            this.rotateCCW();
+            break;
+          default:
+            return; // Quit when this doesn't handle the key event.
+        }
+        event.preventDefault();
+      },
+      true
+    );
   }
 
   handleDownArrowKeyEvent() {
-    const handleDownArrow = (event) => {
+    const handleDownArrow = event => {
       if (event.defaultPrevented) {
         return;
       }
@@ -334,7 +353,9 @@ class Game {
         case "Down": // IE/Edge specific value
         case "ArrowDown":
           this.gemPrimaryLive.hardDrop(this.colHeight(this.gemPrimaryLive.col));
-          this.gemSecondaryLive.hardDrop(this.colHeight(this.gemSecondaryLive.col));
+          this.gemSecondaryLive.hardDrop(
+            this.colHeight(this.gemSecondaryLive.col)
+          );
           break;
         default:
           return;
@@ -344,7 +365,6 @@ class Game {
     };
 
     window.addEventListener("keydown", handleDownArrow, true);
-
   }
 
   moveStagingToLive() {
@@ -361,7 +381,7 @@ class Game {
     this.gemSecondaryStaging.render();
   }
 
-  renderGems() {    
+  renderGems() {
     this.handleKeyEvent();
 
     if (!this.gemPrimaryLive) {
@@ -386,7 +406,8 @@ class Game {
   }
 
   updateScore() {
-    this.ctxScoreboard.font = "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
+    this.ctxScoreboard.font =
+      "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
     this.ctxScoreboard.strokeStyle = "white";
     this.ctxScoreboard.strokeText(this.score, 10, 40);
   }
@@ -409,7 +430,7 @@ class Game {
 
       this.storeCurrentGem();
       this.moveStagingToLive();
-      
+
       this.handleCrashGems();
 
       if (this.gemCount % this.gemLevel === 0) {
@@ -427,11 +448,9 @@ class Game {
       }
     }
   }
-  
+
   gameRender() {
-    startGameMenu(
-      this.gameStart
-    );
+    startGameMenu(this.gameStart);
   }
 
   gameStart() {
@@ -453,12 +472,11 @@ class Game {
       [this.gemNull],
       [this.gemNull],
       [this.gemNull],
-      [this.gemNull],
+      [this.gemNull]
     ];
     this.score = 0;
     this.deleteArr = [[], [], [], [], [], []];
   }
- 
 }
 
 export default Game;
