@@ -1,10 +1,6 @@
 class GemPrimary {
   constructor(ctx, vel) {
     const gemImages = [
-      // { color: "blue", imgSrc: "./assets/images/cat.png" },
-      // { color: "red", imgSrc: "./assets/images/cat.png" },
-      // { color: "green", imgSrc: "./assets/images/cat.png" },
-      // { color: "yellow", imgSrc: "./assets/images/cat.png" }
       { type: "gem", color: "blue", imgSrc: "./assets/images/gem_blue.png" },
       { type: "gem", color: "red", imgSrc: "./assets/images/gem_red.png" },
       { type: "gem", color: "green", imgSrc: "./assets/images/gem_green.png" },
