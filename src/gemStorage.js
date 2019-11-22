@@ -34,7 +34,7 @@ class GemStorage {
     });
   }
 
-  update(gemPrimary, gemSecondary, updateScore) {
+  update({gemPrimary, gemSecondary}, updateScore) {
     this.store(gemPrimary, gemSecondary);
     this.handleCrashGems(updateScore);
   }
