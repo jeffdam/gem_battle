@@ -1,5 +1,3 @@
-import GemPrimary from './gemPrimary';
-import GemSecondary from './gemSecondary';
 import { startGameMenu, endGameMenu } from "./menus";
 import GemStorage from './gemStorage';
 import GemPair from './gemPair';
