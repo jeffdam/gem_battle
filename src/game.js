@@ -90,7 +90,7 @@ class Game {
     this.gemPairStaging = new GemPair(this.ctxNextGem, this.gemVel);
   }
 
-  renderGems() {
+  renderGemPair() {
     this.handleKeyEvent();
     if (!this.gemPairLive) {
       this.moveStagingToLive();
@@ -103,11 +103,11 @@ class Game {
     this.ctx.clearRect(0, 0, 300, 650);
     this.ctxNextGem.clearRect(0, 0, 300, 650);
     this.ctxScoreboard.clearRect(0, 0, 300, 650);
+    this.displayScore();
     this.gemStorage.render();
     this.gemPairStaging.renderStaging();
-    this.renderGems();
+    this.renderGemPair();
 
-    this.displayScore();
 
     if (this.gemPairLive.hasStopped()) {
       cancelAnimationFrame(id);
