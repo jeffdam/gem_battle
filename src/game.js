@@ -1,25 +1,23 @@
 import { startGameMenu, endGameMenu } from "./menus";
 import GemStorage from './gemStorage';
 import GemPair from './gemPair';
+import ScoreBoard from './scoreBoard';
 
 
 class Game {
   constructor(ctx, ctxScoreboard, ctxNextGem, ctxMenu) {
     this.ctx = ctx;
     this.ctxMenu = ctxMenu;
-    this.ctxScoreboard = ctxScoreboard;
     this.ctxNextGem = ctxNextGem;
-
+    this.scoreBoard = new ScoreBoard(ctxScoreboard);
     this.gemCount = 0;
     this.gemLevel = 15;
     this.gemVel = 1;
     this.gemPairLive = undefined;
     this.gemPairStaging = new GemPair(this.ctxNextGem, this.gemVel);
     this.gemStorage = new GemStorage(this.ctx);
-    this.score = 0;
     this.renderCycle = this.renderCycle.bind(this);
     this.gameStart = this.gameStart.bind(this);
-    this.updateScore = this.updateScore.bind(this);
   }
 
   handleKeyEvent() {
@@ -73,17 +71,6 @@ class Game {
     window.addEventListener("keydown", handleDownArrow, true);
   }
 
-  updateScore(score) {
-    this.score += score;
-  }
-
-  displayScore() {
-    this.ctxScoreboard.font =
-      "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
-    this.ctxScoreboard.strokeStyle = "white";
-    this.ctxScoreboard.strokeText(this.score, 10, 40);
-  }
-
   moveStagingToLive() {
     this.gemPairStaging.goLive(this.ctx);
     this.gemPairLive = this.gemPairStaging;
@@ -98,12 +85,17 @@ class Game {
     this.gemPairLive.render(this.gemStorage);
   }
 
+  updateScore() {
+    return (score) => {
+      this.scoreBoard.update(score);
+    };
+  }
+
   renderCycle() {
     let id = requestAnimationFrame(this.renderCycle);
     this.ctx.clearRect(0, 0, 300, 650);
     this.ctxNextGem.clearRect(0, 0, 300, 650);
-    this.ctxScoreboard.clearRect(0, 0, 300, 650);
-    this.displayScore();
+    this.scoreBoard.render();
     this.gemStorage.render();
     this.gemPairStaging.renderStaging();
     this.renderGemPair();
@@ -114,7 +106,7 @@ class Game {
 
       this.gemStorage.update(
         this.gemPairLive.getGems(),
-        this.updateScore
+        this.updateScore()
       );
       this.moveStagingToLive();
 
@@ -124,12 +116,12 @@ class Game {
       }
 
       if (this.gemStorage.height(3) >= -50) {
-        this.score += 10;
+        this.scoreBoard.update(10);
         this.gemCount++;
         this.handleDownArrowKeyEvent();
         this.renderCycle();
       } else {
-        endGameMenu(this.ctx, this.score, this.gameStart);
+        endGameMenu(this.ctx, this.scoreBoard.get(), this.gameStart);
       }
     }
   }
