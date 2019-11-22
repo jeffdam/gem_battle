@@ -79,6 +79,7 @@ class Game {
 
   renderGemPair() {
     this.handleKeyEvent();
+    this.handleDownArrowKeyEvent();
     if (!this.gemPairLive) {
       this.moveStagingToLive();
     }
@@ -91,6 +92,16 @@ class Game {
     };
   }
 
+  isGameOver() {
+    if (this.gemStorage.height(3) < -50) {
+      endGameMenu(this.ctx, this.scoreBoard.get(), this.gameStart);
+    } else {
+      this.scoreBoard.update(10);
+      this.gemCount++;
+      this.renderCycle();
+    }
+  }
+
   renderCycle() {
     let id = requestAnimationFrame(this.renderCycle);
     this.ctx.clearRect(0, 0, 300, 650);
@@ -99,7 +110,6 @@ class Game {
     this.gemStorage.render();
     this.gemPairStaging.renderStaging();
     this.renderGemPair();
-
 
     if (this.gemPairLive.hasStopped()) {
       cancelAnimationFrame(id);
@@ -115,14 +125,7 @@ class Game {
         this.gemLevel += 25;
       }
 
-      if (this.gemStorage.height(3) >= -50) {
-        this.scoreBoard.update(10);
-        this.gemCount++;
-        this.handleDownArrowKeyEvent();
-        this.renderCycle();
-      } else {
-        endGameMenu(this.ctx, this.scoreBoard.get(), this.gameStart);
-      }
+      this.isGameOver();
     }
   }
 
