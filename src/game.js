@@ -21,6 +21,7 @@ class Game {
     this.score = 0;
     this.renderCycle = this.renderCycle.bind(this);
     this.gameStart = this.gameStart.bind(this);
+    this.updateScore = this.updateScore.bind(this);
   }
 
   moveHorizontal(direction) {
@@ -112,82 +113,7 @@ class Game {
     }
   }
 
-  checkCrashGems(scoreBonus) {
-    const deleteArr = [[], [], [], [], [], []], remove = [];
-    const gemStorage = this.gemStorage.get();
-    gemStorage.forEach((col, colNum) => {
-      col.forEach((gem, rowNum) => {
-        if (gem.type === "crash") {
-          remove.push(...this.checkNeighbors(colNum, rowNum, gem.color));
-        }
-      });
-    });
-    this.score += 50 * remove.length * scoreBonus;
-    remove.forEach(gem => {
-      deleteArr[gem.col].push(gem.row);
-    });
 
-    return deleteArr;
-  }
-
-  checkNeighbors(col, row, color) {
-    const direction = [
-      [-1, 0],
-      [0, -1],
-      [1, 0],
-      [0, 1]
-    ];
-    const seen = {};
-    const gemStorage = this.gemStorage.get();
-    const remove = [];
-    helper(col, row);
-
-    function helper(col, row) {
-      if (
-        seen[`${col}#${row}`] ||
-        !gemStorage[col][row] ||
-        gemStorage[col][row].color !== color
-      )
-        return;
-      seen[`${col}#${row}`] = true;
-      if (gemStorage[col][row].color === color) {
-        remove.push({col, row});
-      }
-      direction.forEach(dir => {
-        let adjCol = col + dir[0],
-          adjRow = row + dir[1];
-        if (adjCol >= 0 && adjCol <= 5 && !seen[`${adjCol}#${adjRow}`]) {
-          helper(adjCol, adjRow);
-        }
-      });
-    }
-
-    return remove.length > 1 ? remove : [];
-  }
-
-  handleCrashGems(scoreBonus = 1) {
-    let clearedAllValidCrashGems = true;
-    const deleteArr = this.checkCrashGems(scoreBonus);
-    const gemStorage = this.gemStorage.get();
-    for (let col = 0; col < 6; col++) {
-      if (deleteArr[col].length > 0) {
-        clearedAllValidCrashGems = false;
-      }
-      gemStorage[col] = gemStorage[col].filter(
-        (gem, gemIdx) => !deleteArr[col].includes(gemIdx)
-      );
-    }
-    gemStorage.forEach(col => {
-      col.forEach((gem, idx) => {
-        if (idx > 0 && gem.posY < col[idx - 1].posY - 50) {
-          gem.updatePosY(col[idx - 1].posY - 50);
-        }
-      });
-    });
-    if (!clearedAllValidCrashGems) {
-      this.handleCrashGems(scoreBonus + 1);
-    }
-  }
 
   handleKeyEvent() {
     window.addEventListener(
@@ -335,7 +261,11 @@ class Game {
     }
   }
 
-  updateScore() {
+  updateScore(score) {
+    this.score += score;
+  }
+
+  displayScore() {
     this.ctxScoreboard.font =
       "30px 'Permanent Marker','Sedgwick Ave Display', Helvetica, sans-serif";
     this.ctxScoreboard.strokeStyle = "white";
@@ -351,15 +281,13 @@ class Game {
     this.renderStaging();
     this.renderGems();
 
-    this.updateScore();
+    this.displayScore();
 
     if (this.gemPrimaryLive.vel === 0 && this.gemSecondaryLive.vel === 0) {
       cancelAnimationFrame(id);
 
-      this.gemStorage.store(this.gemPrimaryLive, this.gemSecondaryLive);
+      this.gemStorage.update(this.gemPrimaryLive, this.gemSecondaryLive, this.updateScore);
       this.moveStagingToLive();
-
-      this.handleCrashGems();
 
       if (this.gemCount % this.gemLevel === 0) {
         this.gemVel++;
