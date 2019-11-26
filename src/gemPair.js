@@ -85,9 +85,9 @@ class GemPair {
 
   moveHorizontal(direction, gemStorage) {
     const adjCol = direction === "left" ? -1 : 1;
-    const gemPrimaryClear = this.gemPrimary.posY < gemStorage.height(this.gemPrimary.col + adjCol);
-    const gemSecondaryClear = this.gemSecondary.posY < gemStorage.height(this.gemSecondary.col + adjCol);
-    if (gemPrimaryClear && gemSecondaryClear && this.gemPrimary.isDropping() && this.gemSecondary.isDropping()) {
+    const gemPrimaryNeighborClear = this.gemPrimary.posY < gemStorage.height(this.gemPrimary.col + adjCol);
+    const gemSecondaryNeighborClear = this.gemSecondary.posY < gemStorage.height(this.gemSecondary.col + adjCol);
+    if (gemPrimaryNeighborClear && gemSecondaryNeighborClear && this.gemPrimary.isDropping() && this.gemSecondary.isDropping()) {
       this.gemPrimary.moveHorizontal(direction);
       this.gemSecondary.moveHorizontal(direction);
     }
