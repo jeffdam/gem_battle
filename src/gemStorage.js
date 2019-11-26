@@ -46,26 +46,7 @@ class GemStorage {
         : [gemSecondary, gemPrimary];
 
     gems.forEach(gem => {
-      switch (gem.posX) {
-        case 0:
-          this.gemStorage[0].push(gem);
-          break;
-        case 50:
-          this.gemStorage[1].push(gem);
-          break;
-        case 100:
-          this.gemStorage[2].push(gem);
-          break;
-        case 150:
-          this.gemStorage[3].push(gem);
-          break;
-        case 200:
-          this.gemStorage[4].push(gem);
-          break;
-        case 250:
-          this.gemStorage[5].push(gem);
-          break;
-      }
+      this.gemStorage[gem.posX / 50].push(gem);
     });
   }
 
