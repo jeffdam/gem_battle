@@ -22,7 +22,7 @@ class GemStorage {
       const highestGem = this.gemStorage[col][this.gemStorage[col].length - 1];
       return highestGem.posY - 50;
     } else {
-      return 0;
+      return -100;
     }
   }
 

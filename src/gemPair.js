@@ -15,7 +15,7 @@ class GemPair {
   }
 
   hasStopped() {
-    return this.gemPrimary.vel === 0 && this.gemSecondary.vel === 0;
+    return !this.gemPrimary.isDropping() && !this.gemSecondary.isDropping();
   }
 
   rotate(direction) {
@@ -84,84 +84,12 @@ class GemPair {
   }
 
   moveHorizontal(direction, gemStorage) {
-    if (direction === "left") {
-      this.gemPrimary.moveHorizontal(
-        "left",
-        gemStorage.height(this.gemPrimary.col - 1)
-      );
-      this.gemSecondary.moveHorizontal(
-        "left",
-        gemStorage.height(this.gemSecondary.col - 1)
-      );
-    } else {
-      this.gemPrimary.moveHorizontal(
-        "right",
-        gemStorage.height(this.gemPrimary.col + 1)
-      );
-      this.gemSecondary.moveHorizontal(
-        "right",
-        gemStorage.height(this.gemSecondary.col + 1)
-      );
-    }
-  }
-
-  moveLeft(gemStorage) {
-    if (
-      this.gemPrimary.posRel === 1 &&
-      this.gemSecondary.posY < gemStorage.height(this.gemSecondary.col - 1)
-    ) {
-      this.gemPrimary.moveHorizontal(
-        "left",
-        gemStorage.height(this.gemSecondary.col)
-      );
-      this.gemSecondary.moveHorizontal(
-        "left",
-        gemStorage.height(this.gemSecondary.col - 1)
-      );
-    } else if (
-      this.gemSecondary.posRel === 1 &&
-      this.gemPrimary.posY < gemStorage.height(this.gemPrimary.col - 1)
-    ) {
-      this.gemPrimary.moveHorizontal(
-        "left",
-        gemStorage.height(this.gemPrimary.col - 1)
-      );
-      this.gemSecondary.moveHorizontal(
-        "left",
-        gemStorage.height(this.gemPrimary.col)
-      );
-    } else if (this.gemPrimary.posRel !== 3 && this.gemSecondary.posRel !== 3) {
-      this.moveHorizontal("left", gemStorage);
-    }
-  }
-
-  moveRight(gemStorage) {
-    if (
-      this.gemPrimary.posRel === 3 &&
-      this.gemSecondary.posY < gemStorage.height(this.gemSecondary.col + 1)
-    ) {
-      this.gemPrimary.moveHorizontal(
-        "right",
-        gemStorage.height(this.gemSecondary.col)
-      );
-      this.gemSecondary.moveHorizontal(
-        "right",
-        gemStorage.height(this.gemSecondary.col + 1)
-      );
-    } else if (
-      this.gemSecondary.posRel === 3 &&
-      this.gemPrimary.posY < gemStorage.height(this.gemPrimary.col + 1)
-    ) {
-      this.gemPrimary.moveHorizontal(
-        "right",
-        gemStorage.height(this.gemPrimary.col + 1)
-      );
-      this.gemSecondary.moveHorizontal(
-        "right",
-        gemStorage.height(this.gemPrimary.col)
-      );
-    } else if (this.gemPrimary.posRel !== 3 && this.gemSecondary.posRel !== 3) {
-      this.moveHorizontal("right", gemStorage);
+    const adjCol = direction === "left" ? -1 : 1;
+    const gemPrimaryNeighborClear = this.gemPrimary.posY < gemStorage.height(this.gemPrimary.col + adjCol);
+    const gemSecondaryNeighborClear = this.gemSecondary.posY < gemStorage.height(this.gemSecondary.col + adjCol);
+    if (gemPrimaryNeighborClear && gemSecondaryNeighborClear && this.gemPrimary.isDropping() && this.gemSecondary.isDropping()) {
+      this.gemPrimary.moveHorizontal(direction);
+      this.gemSecondary.moveHorizontal(direction);
     }
   }
 
