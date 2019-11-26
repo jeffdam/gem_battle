@@ -69,16 +69,16 @@ class GemStorage {
     });
   }
 
-  handleCrashGems(updateScore, scoreBonus = 1) {
+  handleCrashGems(updateScore, chainReactionBonus = 1) {
     let clearedAllValidCrashGems = true;
-    const deleteArr = this.checkCrashGems(updateScore, scoreBonus);
+    const deleteGemsList = this.checkCrashGems(updateScore, chainReactionBonus);
     const gemStorage = this.gemStorage;
     for (let col = 0; col < 6; col++) {
-      if (deleteArr[col].length > 0) {
+      if (deleteGemsList[col].length > 0) {
         clearedAllValidCrashGems = false;
       }
       gemStorage[col] = gemStorage[col].filter(
-        (gem, gemIdx) => !deleteArr[col].includes(gemIdx)
+        (gem, gemIdx) => !deleteGemsList[col].includes(gemIdx)
       );
     }
     gemStorage.forEach(col => {
@@ -89,12 +89,12 @@ class GemStorage {
       });
     });
     if (!clearedAllValidCrashGems) {
-      this.handleCrashGems(updateScore, scoreBonus + 1);
+      this.handleCrashGems(updateScore, chainReactionBonus + 1);
     }
   }
 
-  checkCrashGems(updateScore, scoreBonus) {
-    const deleteArr = [[], [], [], [], [], []],
+  checkCrashGems(updateScore, chainReactionBonus) {
+    const deleteGemsList = [[], [], [], [], [], []],
       remove = [];
     const gemStorage = this.gemStorage;
     gemStorage.forEach((col, colNum) => {
@@ -104,12 +104,12 @@ class GemStorage {
         }
       });
     });
-    updateScore(50 * remove.length * scoreBonus);
+    updateScore(50 * remove.length * chainReactionBonus);
     remove.forEach(gem => {
-      deleteArr[gem.col].push(gem.row);
+      deleteGemsList[gem.col].push(gem.row);
     });
 
-    return deleteArr;
+    return deleteGemsList;
   }
 
   checkNeighbors(col, row, color) {

@@ -99,8 +99,8 @@ class GemPair {
   }
 
   render(gemStorage) {
-    this.gemSecondary.drop(gemStorage.height(this.gemSecondary.col));
     this.gemPrimary.drop(gemStorage.height(this.gemPrimary.col));
+    this.gemSecondary.drop(gemStorage.height(this.gemSecondary.col));
     if (this.gemPrimary.vel === 0) {
       this.gemSecondary.updateOtherVel();
     } else if (this.gemSecondary.vel === 0) {
