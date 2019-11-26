@@ -15,7 +15,7 @@ class GemPair {
   }
 
   hasStopped() {
-    return this.gemPrimary.vel === 0 && this.gemSecondary.vel === 0;
+    return !this.gemPrimary.isDropping() && !this.gemSecondary.isDropping();
   }
 
   rotate(direction) {
@@ -87,7 +87,7 @@ class GemPair {
     const adjCol = direction === "left" ? -1 : 1;
     const gemPrimaryClear = this.gemPrimary.posY < gemStorage.height(this.gemPrimary.col + adjCol);
     const gemSecondaryClear = this.gemSecondary.posY < gemStorage.height(this.gemSecondary.col + adjCol);
-    if (gemPrimaryClear && gemSecondaryClear) {
+    if (gemPrimaryClear && gemSecondaryClear && this.gemPrimary.isDropping() && this.gemSecondary.isDropping()) {
       this.gemPrimary.moveHorizontal(direction);
       this.gemSecondary.moveHorizontal(direction);
     }
