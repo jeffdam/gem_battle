@@ -73,16 +73,14 @@ class GemPrimary {
     this.render();
   }
 
-  moveHorizontal(direction, adjColHeight) {
+  moveHorizontal(direction) {
     if (this.otherVel !== 0 && this.vel !== 0) {
-      if ((this.posRel === 0 && this.posY < adjColHeight - 50) || (this.posRel !== 0 && this.posY < adjColHeight)) {
-        if (direction === "left") {
-          this.posX -= 50;
-          this.col -= 1;
-        } else if (direction === "right") {
-          this.posX += 50;
-          this.col += 1;
-        }
+      if (direction === "left") {
+        this.posX -= 50;
+        this.col -= 1;
+      } else if (direction === "right") {
+        this.posX += 50;
+        this.col += 1;
       }
     }
   }

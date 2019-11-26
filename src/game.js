@@ -32,11 +32,11 @@ class Game {
         switch (event.key) {
           case "Left": // IE/Edge specific value
           case "ArrowLeft":
-            this.gemPairLive.moveLeft(this.gemStorage);
+            this.gemPairLive.moveHorizontal("left", this.gemStorage);
             break;
           case "Right": // IE/Edge specific value
           case "ArrowRight":
-            this.gemPairLive.moveRight(this.gemStorage);
+            this.gemPairLive.moveHorizontal("right", this.gemStorage);
             break;
           case "z": // Rotate Clockwise
             this.gemPairLive.rotateCW(this.gemStorage);
